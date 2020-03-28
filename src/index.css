@@ -1,0 +1,105 @@
+/* body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+} */
+
+/* for gauge indicators text */
+/* see: https://stackoverflow.com/questions/12214446/google-chart-api-set-gauge-chart-font-size */
+
+.gauge svg g text {
+  font-size: 12px;
+  font-weight: bold;
+}
+/* for middle text */
+.gauge svg g g text {
+  font-size: 12px;
+}
+
+.mdc-linear-progress {
+  height: 10px;
+}
+
+.border-iipzy {
+  border-style: solid;
+  border-color: #287ec7;
+  font-family: "Arial";
+  font-size: 12px;
+  padding: 1em;
+}
+
+.invisible-box {
+  font-family: "Arial";
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.popup {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+}
+
+.popup_over {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10001;
+}
+
+.popup_inner {
+  position: relative;
+  top: 35%;
+  width: 450px;
+  height: 200px;
+  margin: auto;
+  background: white;
+}
+
+.popup_inner_medium {
+  position: relative;
+  top: 20%;
+  width: 600px;
+  height: 400px;
+  margin: auto;
+  background: white;
+}
+
+.popup_inner_large {
+  position: absolute;
+  left: 5%;
+  right: 10%;
+  top: 5%;
+  bottom: 5%;
+  margin: auto;
+  background: white;
+}
+
+.input_disabled {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  color: gray;
+  cursor: pointer;
+}
