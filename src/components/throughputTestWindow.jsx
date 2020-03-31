@@ -10,6 +10,7 @@ import toSentinel from "../ipc/toSentinel";
 import cookie from "../utils/cookie";
 
 import Gauge from "./gauge";
+import InfoPopup from "./infoPopup";
 import Navigator from "./navigator";
 
 let app = null;
@@ -30,8 +31,8 @@ class ThroughputTestWindow extends React.Component {
       inTest: false,
       hideButton: false,
       isLoggedIn: false,
-      failedToGetServer: false,
-      errorMessage: "",
+      showInfoPopup: false,
+      infoMessage: "",
       // progress indicators
       numTicksNominalLatency: 0,
       tickNumNominalLatency: 0,
@@ -175,9 +176,12 @@ class ThroughputTestWindow extends React.Component {
   }
 
   handleFailedToGetServer(message) {
+    console.log(
+      "throughputTestWindow.handleFailedToGetServer: message = " + message
+    );
     this.setState({
-      failedToGetServer: true,
-      errorMessage: message
+      showInfoPopup: true,
+      infoMessage: message
     });
   }
 
@@ -198,7 +202,7 @@ class ThroughputTestWindow extends React.Component {
     this.setState({
       inTest: true,
       hideButton: true,
-      failedToGetServer: false
+      showInfoPopup: false
     });
   }
 
@@ -208,7 +212,7 @@ class ThroughputTestWindow extends React.Component {
     this.setState({
       inTest: true,
       hideButton: true,
-      failedToGetServer: false
+      showInfoPopup: false
     });
   }
 
@@ -379,14 +383,25 @@ class ThroughputTestWindow extends React.Component {
     toSentinel.send(Defs.ipcThroughputTestWindowButtonOldest, 1);
   }
 
+  getInfoMessage() {
+    return this.state.infoMessage;
+  }
+
+  handleInfoPopupClick() {
+    console.log("ThroughputTestWindow.handleInfoPopupClick");
+  }
+
+  hideInfoPopup() {
+    this.setState({ showInfoPopup: false });
+  }
+
   render() {
     console.log("throughputTestWindow.throughputTestWindow render");
 
     const isLoggedIn = ThroughputTestWindow.isLoggedIn;
-    const failedToGetServer = this.state.failedToGetServer;
-    const errorMessage = this.state.errorMessage;
+    const showInfoPopup = this.state.showInfoPopup;
     const displayResults =
-      !failedToGetServer && !this.state.inTest && this.state.timeOfTest;
+      !showInfoPopup && !this.state.inTest && this.state.timeOfTest;
 
     return (
       <div>
@@ -618,10 +633,12 @@ class ThroughputTestWindow extends React.Component {
                 </Tooltip>
               </div>
             )}
-            {failedToGetServer && (
-              <div style={{ textAlign: "center", marginTop: 40 }}>
-                <p style={{ fontSize: "160%" }}>{errorMessage}</p>
-              </div>
+            {showInfoPopup && (
+              <InfoPopup
+                getInfoMessage={() => this.getInfoMessage()}
+                onSubmit={ev => this.handleInfoPopupClick(ev)}
+                closePopup={this.hideInfoPopup.bind(this)}
+              />
             )}
           </div>
         )}
