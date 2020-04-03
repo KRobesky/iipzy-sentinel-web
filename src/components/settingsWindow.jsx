@@ -28,38 +28,14 @@ class SettingsWindow extends React.Component {
     app = this;
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     console.log("SettingsWindow.componentDidMount");
-
-    await this.getSettings();
-
-    SettingsWindow.sentinelIPAddress = sentinelInfo.getSentinelIPAddress();
-
-    this.doRender();
+    getSettings();
   }
 
   componentWillUnmount() {
     console.log("SettingsWindow.componentWillUnmount");
     app = null;
-  }
-
-  async getSettings() {
-    console.log("settingsWindow.getSettings");
-    const { data, status } = await settings.getSettings();
-    SettingsWindow.settings = data.settings;
-    console.log(
-      "SettingsWindow.getSettings: settings = " +
-        JSON.stringify(SettingsWindow.settings, null, 2)
-    );
-  }
-
-  async setSettings(name, value) {
-    console.log(
-      "settingsWindow.setSettings: name = " + name + ", value = " + value
-    );
-    let settings_ = {};
-    settings_[name] = value;
-    return await settings.setSettings({ settings: settings_ });
   }
 
   getClientName() {
@@ -160,100 +136,70 @@ class SettingsWindow extends React.Component {
     this.setState({ [name]: value });
   }
 
-  async handleLogLevelDetailedClick(ev) {
+  handleLogLevelDetailedClick(ev) {
     console.log(
       "SettingsWindow.handleLogLevelDetailedClick: " + ev.target.checked
     );
     SettingsWindow.settings.logLevel = ev.target.checked ? "verbose" : "info";
     SettingsWindow.inProgress = true;
     this.doRender();
-    await this.setSettings("logLevel", SettingsWindow.settings.logLevel);
-    SettingsWindow.inProgress = false;
-    this.doRender();
+    setSettings("logLevel", SettingsWindow.settings.logLevel);
   }
 
-  async handleRebootClick(ev) {
+  handleRebootClick(ev) {
     console.log("SettingsWindow handleRebootClick");
     SettingsWindow.inProgress = true;
     this.doRender();
-    await this.setSettings("rebootAppliance", true);
-    SettingsWindow.inProgress = false;
-    this.doRender();
+    setSettings("rebootAppliance", true);
   }
 
-  async handleSendLogsClick(ev) {
+  handleSendLogsClick(ev) {
     console.log("SettingsWindow handleSendLogsClick");
     SettingsWindow.inProgress = true;
     this.doRender();
-    await this.setSettings("sendLogs", true);
-    SettingsWindow.inProgress = false;
-    this.doRender();
+    setSettings("sendLogs", true);
   }
 
-  async handleSetClientNameClick(ev) {
+  handleSetClientNameClick(ev) {
     console.log("SettingsWindow handleSetClientNameClick");
     SettingsWindow.inProgress = true;
     this.doRender();
-    await this.setSettings("clientName", SettingsWindow.settings.clientName);
-    SettingsWindow.inProgress = false;
-    this.doRender();
+    setSettings("clientName", SettingsWindow.settings.clientName);
   }
 
-  async handleSetServiceAddressClick(ev) {
+  handleSetServiceAddressClick(ev) {
     console.log("SettingsWindow handleSetServiceAddressClick");
     SettingsWindow.inProgress = true;
     this.doRender();
-    await this.setSettings(
-      "serviceAddress",
-      SettingsWindow.settings.serviceAddress
-    );
-    SettingsWindow.inProgress = false;
-    this.doRender();
+    setSettings("serviceAddress", SettingsWindow.settings.serviceAddress);
   }
 
-  async handleSimulateDroppedPacketsClick(ev) {
+  handleSimulateDroppedPacketsClick(ev) {
     console.log(
       "SettingsWindow.handleSimulateDroppedPacketsClick: " + ev.target.checked
     );
     SettingsWindow.settings.simulateDroppedPackets = ev.target.checked;
     SettingsWindow.inProgress = true;
     this.doRender();
-    await this.setSettings(
+    setSettings(
       "simulateDroppedPackets",
       SettingsWindow.settings.simulateDroppedPackets
     );
-    SettingsWindow.inProgress = false;
-    this.doRender();
   }
 
-  async handleSimulateOfflineClick(ev) {
+  handleSimulateOfflineClick(ev) {
     console.log(
       "SettingsWindow.handleSimulateOfflineClick: " + ev.target.checked
     );
     SettingsWindow.settings.simulateOffLine = ev.target.checked;
     SettingsWindow.inProgress = true;
     this.doRender();
-    await this.setSettings(
-      "simulateOffLine",
-      SettingsWindow.settings.simulateOffLine
-    );
-    SettingsWindow.inProgress = false;
-    this.doRender();
+    setSettings("simulateOffLine", SettingsWindow.settings.simulateOffLine);
   }
 
-  async handleWifiClick(ev) {
+  handleWifiClick(ev) {
     console.log("SettingsWindow.handleWifiClick: " + ev.target.checked);
-    SettingsWindow.wifi = ev.target.checked;
-    SettingsWindow.inProgress = true;
-    this.doRender();
-    if (SettingsWindow.wifi) SettingsWindow.showWiFiPopup = true;
-    else {
-      const wifiJoin = { network: "", password: "" };
-      const { data, status } = await this.setSettings("wifiJoin", wifiJoin);
-      await this.getSettings();
-      SettingsWindow.inProgress = false;
-    }
-    this.doRender();
+    joinLeaveWifi(ev.target.checked);
   }
 
   handleNetworkClick(ev) {
@@ -278,45 +224,26 @@ class SettingsWindow extends React.Component {
     this.doRender();
   }
 
-  async hideWiFiPopup() {
+  hideWiFiPopup() {
     SettingsWindow.showWiFiPopup = false;
     SettingsWindow.buttonsEnabled = true;
     SettingsWindow.inProgress = false;
-    await this.getSettings();
-    this.doRender();
+    getSettings();
   }
 
-  async handleRestore_helper(restoreName) {
-    SettingsWindow.inProgress = true;
-    this.doRender();
-    const { data, status } = await this.setSettings(restoreName, true);
-    const { message } = data;
-    console.log(
-      "SettingsWindow.handleRestore_helper: status = " +
-        status +
-        ", message = " +
-        message
-    );
-    SettingsWindow.infoMessage = message;
-    SettingsWindow.showInfoPopup = true;
-    SettingsWindow.inProgress = false;
-    await this.getSettings();
-    this.doRender();
-  }
-
-  async handleRestorePingChartDataClick(ev) {
+  handleRestorePingChartDataClick(ev) {
     console.log("SettingsWindow.handleRestorePingChartDataClick");
-    await this.handleRestore_helper("pingChartDataRestore");
+    restoreFile("pingChartDataRestore");
   }
 
-  async handleRestoreSpeedTestDataClick(ev) {
+  handleRestoreSpeedTestDataClick(ev) {
     console.log("SettingsWindow.handleRestoreSpeedTestDataClick");
-    await this.handleRestore_helper("speedTestDataRestore");
+    restoreFile("speedTestDataRestore");
   }
 
-  async handleUploadPingChartDataClick(file) {
+  handleUploadPingChartDataClick(file) {
     console.log("SettingsWindow.handleUploadPingChartDataClick");
-    await this.uploadFile("uploadpingpchartdata", file);
+    uploadFile("uploadpingpchartdata", file);
   }
 
   handleUploadPingChartDataError(errMsg) {
@@ -326,9 +253,9 @@ class SettingsWindow extends React.Component {
     );
   }
 
-  async handleUploadSpeedTestDataClick(file) {
+  handleUploadSpeedTestDataClick(file) {
     console.log("SettingsWindow.handleUploadSpeedTestDataClick");
-    await this.uploadFile("uploadspeedtestdata", file);
+    uploadFile("uploadspeedtestdata", file);
   }
 
   handleUploadSpeedTestDataError(errMsg) {
@@ -344,46 +271,18 @@ class SettingsWindow extends React.Component {
     cookie.set("uploadSeconds", SettingsWindow.uploadSeconds);
   }
 
-  async uploadFile(method, file) {
-    try {
-      SettingsWindow.inProgress = true;
-      this.doRender();
-      const { status, data } = await this.sendRequest(method, file);
-      const { message } = data;
-      console.log(
-        "SettingsWindow.uploadFile: status = " +
-          status +
-          ", upload message = " +
-          message
-      );
-      SettingsWindow.infoMessage = message;
-      SettingsWindow.showInfoPopup = true;
-    } catch (ex) {
-      // Not Production ready! Do some error handling here instead...
-    }
-    await this.getSettings();
-    SettingsWindow.inProgress = false;
-    this.doRender();
-  }
-
-  async sendRequest(method, file) {
-    const form = new FormData();
-    form.append("file", file, file.name);
-    return await http.post(
-      "http://" + SettingsWindow.sentinelIPAddress + "/api/settings/" + method,
-      form
-    );
-  }
-
   doRender() {
-    const count = this.state.count + 1;
-    this.setState({ count: count });
+    console.log("SettingsWindow.doRender");
+    this.setState({ count: this.state.count + 1 });
   }
 
   render() {
     console.log("SettingsWindow.render");
 
+    if (!SettingsWindow.settings) return <div></div>;
+
     const disabledWhileUpdating = SettingsWindow.inProgress;
+
     const restorePingChartDataReady =
       SettingsWindow.settings.pingChartDataRestore;
     const restoreSpeedTestDataReady =
@@ -405,14 +304,14 @@ class SettingsWindow extends React.Component {
         {showWiFiPopup && (
           <WiFiPopup
             settings={settings_}
-            onClose={ev => this.handleWiFiCloseClick(ev)}
+            onClose={(ev) => this.handleWiFiCloseClick(ev)}
             closePopup={this.hideWiFiPopup.bind(this)}
           />
         )}
         {showInfoPopup && (
           <InfoPopup
             getInfoMessage={() => this.getInfoMessage()}
-            onSubmit={ev => this.handleInfoPopupClick(ev)}
+            onSubmit={(ev) => this.handleInfoPopupClick(ev)}
             closePopup={this.hideResponsePopup.bind(this)}
           />
         )}
@@ -440,7 +339,7 @@ class SettingsWindow extends React.Component {
                                   autoFocus={false}
                                   disabled={false}
                                   value={this.getClientName()}
-                                  onChange={ev => this.handleChange(ev)}
+                                  onChange={(ev) => this.handleChange(ev)}
                                   id="client-name"
                                   name="client-name"
                                   type="text"
@@ -455,9 +354,9 @@ class SettingsWindow extends React.Component {
                                   disabled={disabledWhileUpdating}
                                   style={{
                                     width: "130px",
-                                    color: "#0000b0"
+                                    color: "#0000b0",
                                   }}
-                                  onClick={ev =>
+                                  onClick={(ev) =>
                                     this.handleSetClientNameClick(ev)
                                   }
                                 >
@@ -477,7 +376,7 @@ class SettingsWindow extends React.Component {
                                   autoFocus={false}
                                   disabled={false}
                                   value={this.getServiceAddress()}
-                                  onChange={ev => this.handleChange(ev)}
+                                  onChange={(ev) => this.handleChange(ev)}
                                   id="service-address"
                                   name="service-address"
                                   type="text"
@@ -492,9 +391,9 @@ class SettingsWindow extends React.Component {
                                   disabled={disabledWhileUpdating}
                                   style={{
                                     width: "130px",
-                                    color: "#0000b0"
+                                    color: "#0000b0",
                                   }}
-                                  onClick={ev =>
+                                  onClick={(ev) =>
                                     this.handleSetServiceAddressClick(ev)
                                   }
                                 >
@@ -513,7 +412,9 @@ class SettingsWindow extends React.Component {
                           name="action-log-level-detailed"
                           checked={this.getLogLevelDetailedChecked()}
                           disabled={disabledWhileUpdating}
-                          onChange={ev => this.handleLogLevelDetailedClick(ev)}
+                          onChange={(ev) =>
+                            this.handleLogLevelDetailedClick(ev)
+                          }
                         />
                         &nbsp;Log Level Detailed&nbsp;&nbsp;
                       </tr>
@@ -523,7 +424,7 @@ class SettingsWindow extends React.Component {
                           name="action-simulate-dropped-packets"
                           checked={this.getSimulateDroppedPacketsChecked()}
                           disabled={disabledWhileUpdating}
-                          onChange={ev =>
+                          onChange={(ev) =>
                             this.handleSimulateDroppedPacketsClick(ev)
                           }
                         />
@@ -535,7 +436,7 @@ class SettingsWindow extends React.Component {
                           name="action-simulate-offline"
                           checked={this.getSimulateOfflineChecked()}
                           disabled={disabledWhileUpdating}
-                          onChange={ev => this.handleSimulateOfflineClick(ev)}
+                          onChange={(ev) => this.handleSimulateOfflineClick(ev)}
                         />
                         &nbsp;Simulate Offline&nbsp;&nbsp;
                       </tr>
@@ -549,7 +450,7 @@ class SettingsWindow extends React.Component {
                                   name="action-wifi"
                                   checked={this.getWifiChecked()}
                                   disabled={disabledWhileUpdating}
-                                  onChange={ev => this.handleWifiClick(ev)}
+                                  onChange={(ev) => this.handleWifiClick(ev)}
                                 />
                                 &nbsp;WiFi&nbsp;&nbsp;
                               </td>
@@ -558,7 +459,7 @@ class SettingsWindow extends React.Component {
                                   className="input_disabled"
                                   readonly="readonly"
                                   value={this.getNetwork()}
-                                  onClick={ev => this.handleNetworkClick(ev)}
+                                  onClick={(ev) => this.handleNetworkClick(ev)}
                                   id="network"
                                   name="network"
                                   type="text"
@@ -577,9 +478,9 @@ class SettingsWindow extends React.Component {
                           disabled={disabledWhileUpdating}
                           style={{
                             width: "130px",
-                            color: "#0000b0"
+                            color: "#0000b0",
                           }}
-                          onClick={ev => this.handleSendLogsClick(ev)}
+                          onClick={(ev) => this.handleSendLogsClick(ev)}
                         >
                           Send Logs
                         </Button>
@@ -592,9 +493,9 @@ class SettingsWindow extends React.Component {
                           disabled={disabledWhileUpdating}
                           style={{
                             width: "130px",
-                            color: "#0000b0"
+                            color: "#0000b0",
                           }}
-                          onClick={ev => this.handleRebootClick(ev)}
+                          onClick={(ev) => this.handleRebootClick(ev)}
                         >
                           Reboot
                         </Button>
@@ -614,7 +515,7 @@ class SettingsWindow extends React.Component {
                                   disabled={disabledWhileUpdating}
                                   style={{
                                     width: "130px",
-                                    color: "#0000b0"
+                                    color: "#0000b0",
                                   }}
                                   href={
                                     "http://" +
@@ -630,10 +531,10 @@ class SettingsWindow extends React.Component {
                                 <FilePicker
                                   extensions={["rrdb"]}
                                   maxSize={64}
-                                  onChange={file =>
+                                  onChange={(file) =>
                                     this.handleUploadPingChartDataClick(file)
                                   }
-                                  onError={errMsg =>
+                                  onError={(errMsg) =>
                                     this.handleUploadPingChartDataError(errMsg)
                                   }
                                 >
@@ -643,7 +544,7 @@ class SettingsWindow extends React.Component {
                                     disabled={disabledWhileUpdating}
                                     style={{
                                       width: "130px",
-                                      color: "#0000b0"
+                                      color: "#0000b0",
                                     }}
                                   >
                                     Upload
@@ -661,9 +562,9 @@ class SettingsWindow extends React.Component {
                                   }
                                   style={{
                                     width: "130px",
-                                    color: "#0000b0"
+                                    color: "#0000b0",
                                   }}
-                                  onClick={ev =>
+                                  onClick={(ev) =>
                                     this.handleRestorePingChartDataClick(ev)
                                   }
                                 >
@@ -683,7 +584,7 @@ class SettingsWindow extends React.Component {
                                   disabled={disabledWhileUpdating}
                                   style={{
                                     width: "130px",
-                                    color: "#0000b0"
+                                    color: "#0000b0",
                                   }}
                                   href={
                                     "http://" +
@@ -699,10 +600,10 @@ class SettingsWindow extends React.Component {
                                 <FilePicker
                                   extensions={["rrdb"]}
                                   maxSize={2}
-                                  onChange={file =>
+                                  onChange={(file) =>
                                     this.handleUploadSpeedTestDataClick(file)
                                   }
-                                  onError={errMsg =>
+                                  onError={(errMsg) =>
                                     this.handleUploadSpeedTestDataError(errMsg)
                                   }
                                 >
@@ -712,7 +613,7 @@ class SettingsWindow extends React.Component {
                                     disabled={disabledWhileUpdating}
                                     style={{
                                       width: "130px",
-                                      color: "#0000b0"
+                                      color: "#0000b0",
                                     }}
                                   >
                                     Upload
@@ -730,9 +631,9 @@ class SettingsWindow extends React.Component {
                                   }
                                   style={{
                                     width: "130px",
-                                    color: "#0000b0"
+                                    color: "#0000b0",
                                   }}
-                                  onClick={ev =>
+                                  onClick={(ev) =>
                                     this.handleRestoreSpeedTestDataClick(ev)
                                   }
                                 >
@@ -766,7 +667,7 @@ class SettingsWindow extends React.Component {
                                         autoFocus={false}
                                         disabled={false}
                                         value={this.getNominalLatencySeconds()}
-                                        onChange={ev => this.handleChange(ev)}
+                                        onChange={(ev) => this.handleChange(ev)}
                                         id="nominal-latency-seconds"
                                         name="nominal-latency-seconds"
                                         type="text"
@@ -785,7 +686,7 @@ class SettingsWindow extends React.Component {
                                         autoFocus={false}
                                         disabled={false}
                                         value={this.getDownloadSeconds()}
-                                        onChange={ev => this.handleChange(ev)}
+                                        onChange={(ev) => this.handleChange(ev)}
                                         id="download-seconds"
                                         name="download-seconds"
                                         type="text"
@@ -800,9 +701,9 @@ class SettingsWindow extends React.Component {
                                         disabled={disabledWhileUpdating}
                                         style={{
                                           width: "130px",
-                                          color: "#0000b0"
+                                          color: "#0000b0",
                                         }}
-                                        onClick={ev =>
+                                        onClick={(ev) =>
                                           this.handleSaveSpeedTestSettingsClick(
                                             ev
                                           )
@@ -821,7 +722,7 @@ class SettingsWindow extends React.Component {
                                         autoFocus={false}
                                         disabled={false}
                                         value={this.getUploadSeconds()}
-                                        onChange={ev => this.handleChange(ev)}
+                                        onChange={(ev) => this.handleChange(ev)}
                                         id="upload-seconds"
                                         name="upload-seconds"
                                         type="text"
@@ -880,5 +781,90 @@ SettingsWindow.inProgress = false;
 SettingsWindow.infoMessage = "";
 SettingsWindow.showInfoPopup = false;
 SettingsWindow.showWiFiPopup = false;
+
+async function getSettings() {
+  console.log("SettingsWindow.getSettings");
+  const { data, status } = await settings.getSettings();
+  SettingsWindow.settings = data.settings;
+  SettingsWindow.sentinelIPAddress = sentinelInfo.getSentinelIPAddress();
+  console.log(
+    "SettingsWindow.getSettings: settings = " +
+      JSON.stringify(SettingsWindow.settings, null, 2)
+  );
+  if (app) app.doRender();
+}
+
+async function joinLeaveWifi(checked) {
+  SettingsWindow.wifi = checked;
+  SettingsWindow.inProgress = true;
+  if (app) app.doRender();
+  if (SettingsWindow.wifi) SettingsWindow.showWiFiPopup = true;
+  else {
+    const wifiJoin = { network: "", password: "" };
+    const { data, status } = await setSettings("wifiJoin", wifiJoin);
+    await getSettings();
+    SettingsWindow.inProgress = false;
+  }
+  if (app) app.doRender();
+}
+
+async function restoreFile(restoreName) {
+  SettingsWindow.inProgress = true;
+  if (app) app.doRender();
+  const { data, status } = await setSettings(restoreName, true);
+  const { message } = data;
+  console.log(
+    "SettingsWindow.restoreFile: status = " + status + ", message = " + message
+  );
+  SettingsWindow.infoMessage = message;
+  SettingsWindow.showInfoPopup = true;
+  SettingsWindow.inProgress = false;
+  await getSettings();
+  if (app) app.doRender();
+}
+
+async function sendRequest(method, file) {
+  const form = new FormData();
+  form.append("file", file, file.name);
+  return await http.post(
+    "http://" + SettingsWindow.sentinelIPAddress + "/api/settings/" + method,
+    form
+  );
+}
+
+async function setSettings(name, value) {
+  console.log(
+    "SettingsWindow.setSettings: name = " + name + ", value = " + value
+  );
+  let settings_ = {};
+  settings_[name] = value;
+  const ret = await settings.setSettings({ settings: settings_ });
+  //??TODO error check.
+  SettingsWindow.inProgress = false;
+  if (app) app.doRender();
+  return ret;
+}
+
+async function uploadFile(method, file) {
+  try {
+    SettingsWindow.inProgress = true;
+    if (app) app.doRender();
+    const { status, data } = await sendRequest(method, file);
+    const { message } = data;
+    console.log(
+      "SettingsWindow.uploadFile: status = " +
+        status +
+        ", upload message = " +
+        message
+    );
+    SettingsWindow.infoMessage = message;
+    SettingsWindow.showInfoPopup = true;
+  } catch (ex) {
+    // Not Production ready! Do some error handling here instead...
+  }
+  // await getSettings();
+  SettingsWindow.inProgress = false;
+  if (app) app.doRender();
+}
 
 export default SettingsWindow;

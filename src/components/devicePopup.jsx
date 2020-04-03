@@ -23,7 +23,7 @@ class ServiceTable extends React.Component {
       <table id="service-table">
         {services &&
           services.map(
-            item =>
+            (item) =>
               item.serviceInfo && (
                 <tr key={item.serviceInfo.friendlyName}>
                   <td>{item.serviceInfo.friendlyName}</td>
@@ -63,31 +63,7 @@ class DevicePopup extends React.Component {
     app = null;
   }
 
-  async putDevice(deviceChanges) {
-    const { data, status } = await devices.putDevice(deviceChanges);
-    if (data.__hadError__) {
-      DevicePopup.infoMessage = data.__hadError__.errorMessage;
-      DevicePopup.showInfoPopup = true;
-
-      this.doRender();
-
-      return;
-    }
-
-    DevicePopup.device = data.device;
-    DevicePopup.infoMessage = DevicePopup.device.ipAddress + " updated";
-    DevicePopup.showInfoPopup = true;
-    DevicePopup.orgComment = DevicePopup.device.comment
-      ? DevicePopup.device.comment
-      : "";
-    DevicePopup.orgWatch = DevicePopup.device.watch
-      ? DevicePopup.device.watch
-      : false;
-
-    this.doRender();
-  }
-
-  async handleSubmitClick(ev) {
+  handleSubmitClick(ev) {
     console.log("DevicePopup.handleSubmitClick");
     let deviceChanges = {};
     const device = DevicePopup.device;
@@ -99,7 +75,7 @@ class DevicePopup extends React.Component {
 
     console.log("..submit: data = " + JSON.stringify(deviceChanges, null, 2));
 
-    await this.putDevice(deviceChanges);
+    putDevice(deviceChanges);
   }
 
   handleCloseClick(ev) {
@@ -160,7 +136,7 @@ class DevicePopup extends React.Component {
           {showInfoPopup ? (
             <InfoPopup
               getInfoMessage={() => this.getInfoMessage()}
-              onSubmit={ev => this.handleInfoPopupClick(ev)}
+              onSubmit={(ev) => this.handleInfoPopupClick(ev)}
               closePopup={this.hideInfoPopup.bind(this)}
             />
           ) : null}
@@ -188,7 +164,7 @@ class DevicePopup extends React.Component {
                         name="comment-text"
                         size="40"
                         value={device.comment ? device.comment : ""}
-                        onChange={ev => this.handleCommentChange(ev)}
+                        onChange={(ev) => this.handleCommentChange(ev)}
                       />
                     </td>
                   </tr>
@@ -242,7 +218,7 @@ class DevicePopup extends React.Component {
                         type="checkbox"
                         name="watch-state"
                         checked={device.watch ? device.watch : false}
-                        onChange={ev => this.handleWatchChange(ev)}
+                        onChange={(ev) => this.handleWatchChange(ev)}
                       />
                     </td>
                   </tr>
@@ -258,17 +234,17 @@ class DevicePopup extends React.Component {
                   disabled={!this.getEnableSubmit()}
                   style={{
                     width: "130px",
-                    color: "#0000b0"
+                    color: "#0000b0",
                   }}
                   autoFocus
-                  onClick={ev => this.handleSubmitClick(ev)}
+                  onClick={(ev) => this.handleSubmitClick(ev)}
                 >
                   Submit
                 </Button>
               </div>
             </div>
           ) : null}
-          <CloseButton onClick={ev => this.handleCloseClick(ev)} />
+          <CloseButton onClick={(ev) => this.handleCloseClick(ev)} />
         </div>
       </div>
     );
@@ -281,5 +257,29 @@ DevicePopup.orgComment = "";
 DevicePopup.orgWatch = false;
 DevicePopup.showInfoPopup = false;
 DevicePopup.infoMessage = "";
+
+async function putDevice(deviceChanges) {
+  const { data, status } = await devices.putDevice(deviceChanges);
+  if (data.__hadError__) {
+    DevicePopup.infoMessage = data.__hadError__.errorMessage;
+    DevicePopup.showInfoPopup = true;
+
+    if (app) app.doRender();
+
+    return;
+  }
+
+  DevicePopup.device = data.device;
+  DevicePopup.infoMessage = DevicePopup.device.ipAddress + " updated";
+  DevicePopup.showInfoPopup = true;
+  DevicePopup.orgComment = DevicePopup.device.comment
+    ? DevicePopup.device.comment
+    : "";
+  DevicePopup.orgWatch = DevicePopup.device.watch
+    ? DevicePopup.device.watch
+    : false;
+
+  if (app) app.doRender();
+}
 
 export default DevicePopup;

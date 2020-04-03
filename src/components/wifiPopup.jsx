@@ -24,9 +24,6 @@ class WiFiPopup extends React.Component {
         JSON.stringify(this.props.settings, null, 2)
     );
 
-    // this.device = null;
-    // this.title = "Network Device";
-
     this.state = { count: 0 };
   }
 
@@ -37,13 +34,6 @@ class WiFiPopup extends React.Component {
   componentWillUnmount() {
     console.log("WiFiPopup.componentWillUnmount");
     app = null;
-  }
-
-  async setSettings(name, value) {
-    console.log("WiFiPopup.setSettings: name = " + name + ", value = " + value);
-    let settings_ = {};
-    settings_[name] = value;
-    return await settings.setSettings({ settings: settings_ });
   }
 
   getEnableJoin() {
@@ -84,25 +74,9 @@ class WiFiPopup extends React.Component {
     this.doRender();
   }
 
-  async handlePasswordPopupClick(password) {
+  handlePasswordPopupClick(password) {
     console.log("...handlePasswordPopupClick: password = " + password);
-    // send password to sentinel.
-    WiFiPopup.inProgress = true;
-    this.doRender();
-    const wifiJoin = { network: WiFiPopup.selectedNetwork, password };
-    const { data, status } = await this.setSettings("wifiJoin", wifiJoin);
-    if (data.__hadError__) {
-      WiFiPopup.infoMessage = data.__hadError__.errorMessage;
-      WiFiPopup.showInfoPopup = true;
-      WiFiPopup.inProgress = false;
-      this.doRender();
-      return;
-    }
-
-    WiFiPopup.inProgress = false;
-    this.doRender();
-
-    this.handleCloseClick(null);
+    sendWiFiPassword(password);
   }
 
   handleSelect(ev) {
@@ -124,8 +98,7 @@ class WiFiPopup extends React.Component {
     this.doRender();
   }
   doRender() {
-    const count = this.state.count + 1;
-    this.setState({ count: count });
+    this.setState({ count: this.state.count + 1 });
   }
 
   render() {
@@ -139,14 +112,14 @@ class WiFiPopup extends React.Component {
         <div className="popup_inner_medium">
           {showPasswordPopup && (
             <PasswordPopup
-              onSubmit={ev => this.handlePasswordPopupClick(ev)}
+              onSubmit={(ev) => this.handlePasswordPopupClick(ev)}
               closePopup={this.hidePasswordPopup.bind(this)}
             />
           )}
           {showInfoPopup && (
             <InfoPopup
               getInfoMessage={() => this.getInfoMessage()}
-              onSubmit={ev => this.handleInfoPopupClick(ev)}
+              onSubmit={(ev) => this.handleInfoPopupClick(ev)}
               closePopup={this.hideInfoPopup.bind(this)}
             />
           )}
@@ -157,7 +130,7 @@ class WiFiPopup extends React.Component {
           </div>
           <Dropdown
             options={this.getNetworks()}
-            onChange={ev => this.handleSelect(ev)}
+            onChange={(ev) => this.handleSelect(ev)}
             value={this.getSelectedNetwork()}
             placeholder="Select a network"
           />{" "}
@@ -169,14 +142,14 @@ class WiFiPopup extends React.Component {
               disabled={!this.getEnableJoin()}
               style={{
                 width: "130px",
-                color: "#0000b0"
+                color: "#0000b0",
               }}
-              onClick={ev => this.handleJoinClick(ev)}
+              onClick={(ev) => this.handleJoinClick(ev)}
             >
               Join
             </Button>
           </div>
-          <CloseButton onClick={ev => this.handleCloseClick(ev)} />
+          <CloseButton onClick={(ev) => this.handleCloseClick(ev)} />
         </div>
       </div>
     );
@@ -190,5 +163,32 @@ WiFiPopup.infoMessage = "";
 WiFiPopup.inProgress = false;
 WiFiPopup.showInfoPopup = false;
 WiFiPopup.showPasswordPopup = false;
+
+async function sendWiFiPassword(password) {
+  // send password to sentinel.
+  WiFiPopup.inProgress = true;
+  if (app) app.doRender();
+  const wifiJoin = { network: WiFiPopup.selectedNetwork, password };
+  const { data, status } = await setSettings("wifiJoin", wifiJoin);
+  if (data.__hadError__) {
+    WiFiPopup.infoMessage = data.__hadError__.errorMessage;
+    WiFiPopup.showInfoPopup = true;
+    WiFiPopup.inProgress = false;
+    if (app) app.doRender();
+    return;
+  }
+
+  WiFiPopup.inProgress = false;
+  if (app) app.doRender();
+
+  if (app) app.handleCloseClick(null);
+}
+
+async function setSettings(name, value) {
+  console.log("WiFiPopup.setSettings: name = " + name + ", value = " + value);
+  let settings_ = {};
+  settings_[name] = value;
+  return await settings.setSettings({ settings: settings_ });
+}
 
 export default WiFiPopup;

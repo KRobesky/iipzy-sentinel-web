@@ -88,28 +88,9 @@ class LoginWindow extends React.Component {
     this.doRender();
   }
 
-  async handleSubmitClick(ev) {
+  handleSubmitClick(ev) {
     console.log("LoginWindow.handleSubmitClick");
-
-    LoginWindow.buttonsEnabled = false;
-    this.doRender();
-
-    const { data, status } = await auth.verifyRequest({
-      userName: LoginWindow.userName,
-      password: LoginWindow.password
-    });
-
-    if (data.__hadError__) {
-      LoginWindow.infoMessage = data.__hadError__.errorMessage;
-      LoginWindow.verified = false;
-    } else {
-      LoginWindow.infoMessage = "Successfully logged in";
-      LoginWindow.verified = true;
-    }
-
-    LoginWindow.showInfoPopup = true;
-    LoginWindow.buttonsEnabled = true;
-    this.doRender();
+    handleSubmitClick_helper();
   }
 
   render() {
@@ -124,7 +105,7 @@ class LoginWindow extends React.Component {
         {showInfoPopup ? (
           <InfoPopup
             getInfoMessage={() => this.getInfoMessage()}
-            onSubmit={ev => this.handleInfoPopupClick(ev)}
+            onSubmit={(ev) => this.handleInfoPopupClick(ev)}
             closePopup={this.hideInfoPopup.bind(this)}
           />
         ) : null}
@@ -148,7 +129,7 @@ class LoginWindow extends React.Component {
             name="userName"
             value={this.getUserName()}
             label="User Name"
-            onChange={ev => this.handleChange(ev)}
+            onChange={(ev) => this.handleChange(ev)}
             error=""
           />
         )}
@@ -161,7 +142,7 @@ class LoginWindow extends React.Component {
             name="password"
             value={this.getPassword()}
             label="Password"
-            onChange={ev => this.handleChange(ev)}
+            onChange={(ev) => this.handleChange(ev)}
             error=""
           />
         )}
@@ -173,10 +154,10 @@ class LoginWindow extends React.Component {
               disabled={!this.getSubmitButtonEnabled()}
               style={{
                 width: "130px",
-                color: "#0000b0"
+                color: "#0000b0",
               }}
               autoFocus
-              onClick={ev => this.handleSubmitClick(ev)}
+              onClick={(ev) => this.handleSubmitClick(ev)}
             >
               Login
             </Button>
@@ -194,24 +175,26 @@ LoginWindow.showInfoPopup = false;
 LoginWindow.userName = "";
 LoginWindow.verified = false;
 
-// const handleSubmitVerifyResponse = (event, data) => {
-//   console.log(
-//     "LoginWindow.handleSubmitVerifyResponse: data = " +
-//       JSON.stringify(data, null, 2)
-//   );
-//   if (data.__hadError__) {
-//     LoginWindow.infoMessage = data.__hadError__.errorMessage;
-//     LoginWindow.verified = false;
-//   } else {
-//     LoginWindow.infoMessage = "Successfully logged in";
-//     LoginWindow.verified = true;
-//   }
+async function handleSubmitClick_helper() {
+  LoginWindow.buttonsEnabled = false;
+  if (app) app.doRender();
 
-//   LoginWindow.showInfoPopup = true;
-//   LoginWindow.buttonsEnabled = false;
-//   if (app != null) app.doRender();
-// };
+  const { data, status } = await auth.verifyRequest({
+    userName: LoginWindow.userName,
+    password: LoginWindow.password,
+  });
 
-// eventManager.on(Defs.ipcSubmitVerifyResponse, handleSubmitVerifyResponse);
+  if (data.__hadError__) {
+    LoginWindow.infoMessage = data.__hadError__.errorMessage;
+    LoginWindow.verified = false;
+  } else {
+    LoginWindow.infoMessage = "Successfully logged in";
+    LoginWindow.verified = true;
+  }
+
+  LoginWindow.showInfoPopup = true;
+  LoginWindow.buttonsEnabled = true;
+  if (app) app.doRender();
+}
 
 export default LoginWindow;

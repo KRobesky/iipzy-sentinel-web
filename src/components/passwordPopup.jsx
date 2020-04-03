@@ -40,7 +40,7 @@ class PasswordPopup extends React.Component {
     this.state.password = "";
   }
 
-  async handleSubmitClick(ev) {
+  handleSubmitClick(ev) {
     // console.log("...Popup handleSubmitClick");
 
     this.props.onSubmit(this.state.password);
@@ -71,7 +71,7 @@ class PasswordPopup extends React.Component {
               name="password"
               value={this.getPassword()}
               label="Password"
-              onChange={ev => this.handleChange(ev)}
+              onChange={(ev) => this.handleChange(ev)}
               error=""
             />
             <h1>{this.props.text}</h1>
@@ -82,15 +82,15 @@ class PasswordPopup extends React.Component {
                 disabled={!this.isValidInput()}
                 style={{
                   width: "130px",
-                  color: "#0000b0"
+                  color: "#0000b0",
                 }}
                 /*  autoFocus */
-                onClick={ev => this.handleSubmitClick(ev)}
+                onClick={(ev) => this.handleSubmitClick(ev)}
               >
                 Submit
               </Button>
             </div>
-            <CloseButton onClick={ev => this.handleCloseClick(ev)} />
+            <CloseButton onClick={(ev) => this.handleCloseClick(ev)} />
           </div>
         </div>
       </div>

@@ -22,7 +22,7 @@ class DeviceTable extends React.Component {
       <table id="device-table">
         {devices &&
           devices.map(
-            item =>
+            (item) =>
               item.alive && (
                 <tr key={item.ipAddress}>
                   <td
@@ -59,9 +59,9 @@ class DevicesWindow extends React.Component {
     app = this;
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     console.log("DevicesWindow.componentDidMount");
-    await getDevices("?aliveonly=1");
+    getDevices("?aliveonly=1");
   }
 
   componentWillUnmount() {
@@ -115,8 +115,8 @@ class DevicesWindow extends React.Component {
         {showDevicePopup ? (
           <DevicePopup
             getDevice={() => this.getDevice()}
-            putDevice={device => this.putDevice(device)}
-            onClose={ev => this.handleDeviceCloseClick(ev)}
+            putDevice={(device) => this.putDevice(device)}
+            onClose={(ev) => this.handleDeviceCloseClick(ev)}
             closePopup={this.hideDevicePopup.bind(this)}
           />
         ) : null}
@@ -130,12 +130,12 @@ class DevicesWindow extends React.Component {
             font: "14px Courier New",
             fontWeight: "bold",
             overflowX: "scroll",
-            overflowY: "scroll"
+            overflowY: "scroll",
           }}
         >
           <DeviceTable
             devices={devices}
-            onClick={ev => this.handleIpAddressClick(ev)}
+            onClick={(ev) => this.handleIpAddressClick(ev)}
           />
         </div>
       </div>
@@ -176,15 +176,15 @@ function updateDevice(device_) {
     // NB: Although lint says otherwise, ipAddress is needed for proper operation.
     // eslint-disable-next-line
     ipAddress,
-    device
+    device,
   ] of DevicesWindow.deviceByIpAddress.entries()) {
     DevicesWindow.devices.push(device);
   }
 }
 
-const handleDevicesReady = async (event, data) => {
+const handleDevicesReady = (event, data) => {
   console.log("DevicesWindow.handleDevicesReady");
-  await getDevices("?aliveonly=0");
+  getDevices("?aliveonly=0");
 };
 
 const handleDeviceUpdated = (event, data) => {

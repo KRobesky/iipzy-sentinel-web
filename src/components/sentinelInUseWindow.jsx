@@ -14,7 +14,7 @@ class SentinelInUseWindow extends React.Component {
     //app = this;
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     console.log("SentinelInUseWindow componentDidMount");
   }
 
