@@ -179,7 +179,7 @@ async function handleSubmitClick_helper() {
   LoginWindow.buttonsEnabled = false;
   if (app) app.doRender();
 
-  const { data, status } = await auth.verifyRequest({
+  const { data } = await auth.verifyRequest({
     userName: LoginWindow.userName,
     password: LoginWindow.password,
   });

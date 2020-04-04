@@ -169,7 +169,7 @@ async function sendWiFiPassword(password) {
   WiFiPopup.inProgress = true;
   if (app) app.doRender();
   const wifiJoin = { network: WiFiPopup.selectedNetwork, password };
-  const { data, status } = await setSettings("wifiJoin", wifiJoin);
+  const { data } = await setSettings("wifiJoin", wifiJoin);
   if (data.__hadError__) {
     WiFiPopup.infoMessage = data.__hadError__.errorMessage;
     WiFiPopup.showInfoPopup = true;

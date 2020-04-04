@@ -6,7 +6,6 @@ import Button from "@material-ui/core/Button";
 import devices from "../services/devices";
 import CloseButton from "./closeButton";
 import InfoPopup from "./infoPopup";
-import eventManager from "../ipc/eventManager";
 
 let app = null;
 
@@ -259,7 +258,7 @@ DevicePopup.showInfoPopup = false;
 DevicePopup.infoMessage = "";
 
 async function putDevice(deviceChanges) {
-  const { data, status } = await devices.putDevice(deviceChanges);
+  const { data } = await devices.putDevice(deviceChanges);
   if (data.__hadError__) {
     DevicePopup.infoMessage = data.__hadError__.errorMessage;
     DevicePopup.showInfoPopup = true;

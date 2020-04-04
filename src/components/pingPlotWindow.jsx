@@ -1,10 +1,7 @@
 import React from "react";
-//const { ipcRenderer } = require("electron");
 import { Chart } from "react-google-charts";
 import Button from "@material-ui/core/Button";
-import Spinner from "react-bootstrap/Spinner";
 import Tooltip from "@material-ui/core/Tooltip";
-//import { threadId } from "worker_threads";
 
 import Defs from "iipzy-shared/src/defs";
 
@@ -12,6 +9,7 @@ import eventManager from "../ipc/eventManager";
 import toSentinel from "../ipc/toSentinel";
 
 import Navigator from "./navigator";
+import SpinnerPopup from "./spinnerPopup";
 
 //  zoom
 //                duration    num samples   points 	point-samples     scroll-unit   scroll-unit-samples
@@ -69,7 +67,7 @@ class PingPlotWindow extends React.Component {
       { numPoints: 720, numSamples: 12, numScrollUnitSamples: 360 }, //    ZOOMLEVEL_12HOURS
       { numPoints: 720, numSamples: 24, numScrollUnitSamples: 720 }, //    ZOOMLEVEL_1DAY
       { numPoints: 720, numSamples: 168, numScrollUnitSamples: 17280 }, // ZOOMLEVEL_1WEEK
-      { numPoints: 720, numSamples: 720, numScrollUnitSamples: 0 } //      ZOOMLEVEL_30DAYS
+      { numPoints: 720, numSamples: 720, numScrollUnitSamples: 0 }, //      ZOOMLEVEL_30DAYS
     ];
     this.zoomLevel = ZOOMLEVEL_DEFAULT;
     this.zoomLevelPrev = ZOOMLEVEL_DEFAULT;
@@ -88,7 +86,7 @@ class PingPlotWindow extends React.Component {
       "ms",
       { type: "string", role: "style" },
       { type: "string", role: "tooltip" },
-      { type: "string", role: "id-linkId" }
+      { type: "string", role: "id-linkId" },
     ];
 
     for (let i = 1; i < this.numPoints + 1; i++) {
@@ -114,14 +112,14 @@ class PingPlotWindow extends React.Component {
         callback: ({ chartWrapper, google }) => {
           console.log("------------------------------ready");
           this.handleChartReadyEvent(chartWrapper);
-        }
+        },
       },
       {
         eventName: "select",
         callback: ({ chartWrapper }) => {
           this.handleChartSelectEvent(chartWrapper);
-        }
-      }
+        },
+      },
     ];
 
     app = this;
@@ -288,7 +286,7 @@ class PingPlotWindow extends React.Component {
         millis,
         droppedStyle,
         tooltipStyle,
-        idLinkIdStyle
+        idLinkIdStyle,
       ]);
     }
 
@@ -379,7 +377,7 @@ class PingPlotWindow extends React.Component {
 
       toSentinel.send(Defs.ipcPingPlotWindowButtonZoomChangeEx, {
         zoom: this.zoomArray[this.zoomLevel],
-        moveOffset
+        moveOffset,
       });
     }
   }
@@ -404,7 +402,7 @@ class PingPlotWindow extends React.Component {
 
       toSentinel.send(Defs.ipcPingPlotWindowButtonZoomChangeEx, {
         zoom: this.zoomArray[this.zoomLevel],
-        moveOffset
+        moveOffset,
       });
     }
     this.doRender();
@@ -470,6 +468,7 @@ class PingPlotWindow extends React.Component {
     return (
       <div>
         <Navigator />
+        {showSpinner && <SpinnerPopup />}
         <div style={{ marginLeft: 20, textAlign: "left" }}>
           <p style={{ fontSize: "140%" }}>Ping Latency</p>
         </div>
@@ -486,7 +485,7 @@ class PingPlotWindow extends React.Component {
               vAxis: { title: "latency (milliseconds)" },
               legend: { position: "none" },
               title: this.getTitle(),
-              titleTextStyle: { bold: false }
+              titleTextStyle: { bold: false },
             }}
           />
         </div>
@@ -508,7 +507,7 @@ class PingPlotWindow extends React.Component {
                         color: "#0000b0",
                         visibility: this.getButtonVisibility()
                       }} */
-                        onClick={ev => this.handleLeftClick(ev)}
+                        onClick={(ev) => this.handleLeftClick(ev)}
                       >
                         &lt;
                       </Button>
@@ -529,7 +528,7 @@ class PingPlotWindow extends React.Component {
                         color: "#0000b0",
                         visibility: this.getButtonVisibility()
                       }} */
-                        onClick={ev => this.handleLeftDroppedClick(ev)}
+                        onClick={(ev) => this.handleLeftDroppedClick(ev)}
                       >
                         &lt;
                       </Button>
@@ -540,14 +539,7 @@ class PingPlotWindow extends React.Component {
                   <div
                     style={{ width: 140, marginLeft: 90, textAlign: "center" }}
                   >
-                    {showSpinner ? (
-                      <p>
-                        <Spinner animation="border" role="status">
-                          <span className="sr-only">Loading...</span>
-                        </Spinner>
-                      </p>
-                    ) : null}
-                    {!showSpinner ? <p>{this.getDay()}</p> : null}
+                    <p>{this.getDay()}</p>
                   </div>
                 </td>
                 <td>
@@ -564,7 +556,7 @@ class PingPlotWindow extends React.Component {
                         color: "#0000b0",
                         visibility: this.getButtonVisibility()
                       }} */
-                        onClick={ev => this.handleRightDroppedClick(ev)}
+                        onClick={(ev) => this.handleRightDroppedClick(ev)}
                       >
                         &gt;
                       </Button>
@@ -585,7 +577,7 @@ class PingPlotWindow extends React.Component {
                         color: "#0000b0",
                         visibility: this.getButtonVisibility()
                       }} */
-                        onClick={ev => this.handleRightClick(ev)}
+                        onClick={(ev) => this.handleRightClick(ev)}
                       >
                         &gt;
                       </Button>
@@ -606,7 +598,7 @@ class PingPlotWindow extends React.Component {
                         color: "#0000b0",
                         visibility: this.getButtonVisibility()
                       }} */
-                        onClick={ev => this.handleHomeClick(ev)}
+                        onClick={(ev) => this.handleHomeClick(ev)}
                       >
                         &gt;&gt;
                       </Button>
@@ -629,7 +621,7 @@ class PingPlotWindow extends React.Component {
                         color: "#0000b0",
                         visibility: this.getButtonVisibility()
                       }} */
-                        onClick={ev => this.handlZoomOutClick(ev)}
+                        onClick={(ev) => this.handlZoomOutClick(ev)}
                       >
                         Zoom -
                       </Button>
@@ -650,7 +642,7 @@ class PingPlotWindow extends React.Component {
                         color: "#0000b0",
                         visibility: this.getButtonVisibility()
                       }} */
-                        onClick={ev => this.handlZoomInClick(ev)}
+                        onClick={(ev) => this.handlZoomInClick(ev)}
                       >
                         Zoom +
                       </Button>

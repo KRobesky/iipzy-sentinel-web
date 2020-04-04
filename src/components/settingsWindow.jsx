@@ -2,7 +2,6 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import { FilePicker } from "react-file-picker";
 import FormData from "form-data";
-import Spinner from "react-bootstrap/Spinner";
 
 //import Defs from "iipzy-shared/src/defs";
 
@@ -14,6 +13,7 @@ import sentinelInfo from "../utils/sentinelInfo";
 
 import InfoPopup from "./infoPopup";
 import Navigator from "./navigator";
+import SpinnerPopup from "./spinnerPopup";
 import WiFiPopup from "./wifiPopup";
 
 let app = null;
@@ -301,6 +301,7 @@ class SettingsWindow extends React.Component {
         <div style={{ marginLeft: 20, textAlign: "left" }}>
           <p style={{ fontSize: "140%" }}>Sentinel Settings</p>
         </div>
+        {showSpinner && <SpinnerPopup />}
         {showWiFiPopup && (
           <WiFiPopup
             settings={settings_}
@@ -740,26 +741,6 @@ class SettingsWindow extends React.Component {
                     </tbody>
                   </table>
                 </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                </tr>
-                <tr>
-                  <td>&nbsp;</td>
-                </tr>
-                {showSpinner ? (
-                  <tr>
-                    <td>
-                      <div style={{ marginLeft: "-60px" }}>
-                        <Spinner animation="border" role="status">
-                          <span className="sr-only">Loading...</span>
-                        </Spinner>
-                      </div>
-                    </td>
-                  </tr>
-                ) : null}
               </tbody>
             </table>
           </div>
@@ -784,7 +765,7 @@ SettingsWindow.showWiFiPopup = false;
 
 async function getSettings() {
   console.log("SettingsWindow.getSettings");
-  const { data, status } = await settings.getSettings();
+  const { data } = await settings.getSettings();
   SettingsWindow.settings = data.settings;
   SettingsWindow.sentinelIPAddress = sentinelInfo.getSentinelIPAddress();
   console.log(
@@ -801,7 +782,7 @@ async function joinLeaveWifi(checked) {
   if (SettingsWindow.wifi) SettingsWindow.showWiFiPopup = true;
   else {
     const wifiJoin = { network: "", password: "" };
-    const { data, status } = await setSettings("wifiJoin", wifiJoin);
+    await setSettings("wifiJoin", wifiJoin);
     await getSettings();
     SettingsWindow.inProgress = false;
   }

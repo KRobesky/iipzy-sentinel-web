@@ -5,8 +5,6 @@ import CloseButton from "./closeButton";
 import Input from "./input";
 import Navigator from "./navigator";
 
-let app = null;
-
 class PasswordPopup extends React.Component {
   constructor(props) {
     super(props);
@@ -14,8 +12,6 @@ class PasswordPopup extends React.Component {
     console.log("PasswordPopup.constructor");
 
     this.state = { password: "" };
-
-    app = this;
   }
 
   getPassword() {
@@ -36,8 +32,7 @@ class PasswordPopup extends React.Component {
 
     this.props.onSubmit("");
     this.props.closePopup();
-    // NB: I know this is a no-no.
-    this.state.password = "";
+    this.setState({ password: "" });
   }
 
   handleSubmitClick(ev) {
@@ -45,8 +40,7 @@ class PasswordPopup extends React.Component {
 
     this.props.onSubmit(this.state.password);
     this.props.closePopup();
-    // NB: I know this is a no-no.
-    this.state.password = "";
+    this.setState({ password: "" });
   }
 
   isValidInput() {

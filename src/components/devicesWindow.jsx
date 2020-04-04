@@ -150,7 +150,7 @@ DevicesWindow.infoMessage = "";
 DevicesWindow.showDevicePopup = false;
 
 async function getDevices(queryString) {
-  const { data, status } = await devices.getDevices(queryString);
+  const { data } = await devices.getDevices(queryString);
   if (data.__hadError__) {
     DevicesWindow.infoMessage = data.__hadError__.errorMessage;
 

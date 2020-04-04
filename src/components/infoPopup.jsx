@@ -3,13 +3,10 @@ import React from "react";
 import CloseButton from "./closeButton";
 import Navigator from "./navigator";
 
-let app = null;
-
 class InfoPopup extends React.Component {
-  constructor(props) {
-    super(props);
-    app = this;
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   getInfoMessage() {
     return this.props.getInfoMessage();
@@ -37,7 +34,7 @@ class InfoPopup extends React.Component {
                 {this.getInfoMessage()}
               </p>
             </div>
-            <CloseButton onClick={ev => this.handleSubmitClick(ev)} />
+            <CloseButton onClick={(ev) => this.handleSubmitClick(ev)} />
           </div>
         </div>
       </div>

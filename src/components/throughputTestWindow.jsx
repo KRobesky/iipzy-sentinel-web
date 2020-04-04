@@ -39,7 +39,7 @@ class ThroughputTestWindow extends React.Component {
       numTicksIperf3Down: 0,
       tickNumIperf3Down: 0,
       numTicksIperf3Up: 0,
-      tickNumIperf3Up: 0
+      tickNumIperf3Up: 0,
     };
 
     app = this;
@@ -48,7 +48,7 @@ class ThroughputTestWindow extends React.Component {
   componentDidMount() {
     console.log("ThroughputTestWindow.componentDidMount");
     toSentinel.send(Defs.ipcThroughputTestWindowMount, {
-      position: ThroughputTestWindow.position
+      position: ThroughputTestWindow.position,
     });
   }
 
@@ -171,7 +171,7 @@ class ThroughputTestWindow extends React.Component {
   handleLoginStatus() {
     console.log("throughputTestWindow.handleLoginStatus");
     this.setState({
-      isLoggedIn: ThroughputTestWindow.isLoggedIn
+      isLoggedIn: ThroughputTestWindow.isLoggedIn,
     });
   }
 
@@ -181,7 +181,7 @@ class ThroughputTestWindow extends React.Component {
     );
     this.setState({
       showInfoPopup: true,
-      infoMessage: message
+      infoMessage: message,
     });
   }
 
@@ -196,13 +196,13 @@ class ThroughputTestWindow extends React.Component {
       ),
       uploadThroughputTestDurationSeconds: parseInt(
         cookie.get("uploadSeconds", 10)
-      )
+      ),
     };
     toSentinel.send(Defs.ipcThroughputTestWindowStart, data);
     this.setState({
       inTest: true,
       hideButton: true,
-      showInfoPopup: false
+      showInfoPopup: false,
     });
   }
 
@@ -212,7 +212,7 @@ class ThroughputTestWindow extends React.Component {
     this.setState({
       inTest: true,
       hideButton: true,
-      showInfoPopup: false
+      showInfoPopup: false,
     });
   }
 
@@ -234,7 +234,7 @@ class ThroughputTestWindow extends React.Component {
       numTicksIperf3Down: 0,
       tickNumIperf3Down: 0,
       numTicksIperf3Up: 0,
-      tickNumIperf3Up: 0
+      tickNumIperf3Up: 0,
     });
   }
 
@@ -248,8 +248,8 @@ class ThroughputTestWindow extends React.Component {
       const {
         testState: _testState,
         hideButton: _hideButton,
-        testBusy: _testBusy,
-        failed: _failed
+        // testBusy: _testBusy,
+        // failed: _failed
       } = ret;
 
       if (typeof _testState !== "undefined") {
@@ -258,7 +258,7 @@ class ThroughputTestWindow extends React.Component {
 
         this.setState({
           inTest: _testState,
-          hideButton
+          hideButton,
         });
       }
     }
@@ -289,7 +289,7 @@ class ThroughputTestWindow extends React.Component {
 
     this.setState({
       numTicksNominalLatency: numTicks,
-      tickNumNominalLatency: tickNum
+      tickNumNominalLatency: tickNum,
     });
   }
 
@@ -302,7 +302,7 @@ class ThroughputTestWindow extends React.Component {
 
     this.setState({
       numTicksIperf3Down: numTicks,
-      tickNumIperf3Down: tickNum
+      tickNumIperf3Down: tickNum,
     });
   }
 
@@ -311,7 +311,7 @@ class ThroughputTestWindow extends React.Component {
 
     this.setState({
       numTicksIperf3Up: numTicks,
-      tickNumIperf3Up: tickNum
+      tickNumIperf3Up: tickNum,
     });
   }
 
@@ -359,7 +359,7 @@ class ThroughputTestWindow extends React.Component {
       downloadThroughput: this.roundToTwo(status.downloadThroughputMBits),
       downloadBloat: this.roundToTwo(status.downloadBloatMillis),
       uploadThroughput: this.roundToTwo(status.uploadThroughputMBits),
-      uploadBloat: this.roundToTwo(status.uploadBloatMillis)
+      uploadBloat: this.roundToTwo(status.uploadBloatMillis),
     });
   }
 
@@ -419,10 +419,10 @@ class ThroughputTestWindow extends React.Component {
               variant="contained"
               style={{
                 width: "130px",
-                color: "#0000b0"
+                color: "#0000b0",
               }}
               autoFocus
-              onClick={ev => this.handleLoginClick(ev)}
+              onClick={(ev) => this.handleLoginClick(ev)}
             >
               Login
             </Button>
@@ -446,7 +446,7 @@ class ThroughputTestWindow extends React.Component {
                         position: "relative",
                         zIndex: "1000",
                         left: "0px",
-                        top: "-112px"
+                        top: "-112px",
                       }}
                     >
                       <span
@@ -455,7 +455,7 @@ class ThroughputTestWindow extends React.Component {
                           font: "12px sans-serif",
                           zIndex: 1000,
                           top: 0,
-                          left: 0
+                          left: 0,
                         }}
                       >
                         {this.getNominalLatency()} ms
@@ -475,7 +475,7 @@ class ThroughputTestWindow extends React.Component {
                         position: "relative",
                         zIndex: "1000",
                         left: "0px",
-                        top: "-112px"
+                        top: "-112px",
                       }}
                     >
                       <span
@@ -484,7 +484,7 @@ class ThroughputTestWindow extends React.Component {
                           font: "12px sans-serif",
                           zIndex: 1000,
                           top: 0,
-                          left: 0
+                          left: 0,
                         }}
                       >
                         Bloat:{this.getDownloadBloat()} ms
@@ -504,7 +504,7 @@ class ThroughputTestWindow extends React.Component {
                         position: "relative",
                         zIndex: "1000",
                         left: "0px",
-                        top: "-112px"
+                        top: "-112px",
                       }}
                     >
                       <span
@@ -513,7 +513,7 @@ class ThroughputTestWindow extends React.Component {
                           font: "12px sans-serif",
                           zIndex: 1000,
                           top: 0,
-                          left: 0
+                          left: 0,
                         }}
                       >
                         Bloat:{this.getUploadBloat()} ms
@@ -531,13 +531,13 @@ class ThroughputTestWindow extends React.Component {
                         style={{
                           width: "130px",
                           color: "#0000b0",
-                          visibility: this.getButtonVisibility()
+                          visibility: this.getButtonVisibility(),
                         }}
                         autoFocus
                         onClick={
                           this.getActive()
-                            ? ev => this.handleCancelTestClick(ev)
-                            : ev => this.handleBeginTestClick(ev)
+                            ? (ev) => this.handleCancelTestClick(ev)
+                            : (ev) => this.handleBeginTestClick(ev)
                         }
                       >
                         {this.getActive() ? "Cancel" : "Start"}
@@ -590,7 +590,7 @@ class ThroughputTestWindow extends React.Component {
                     size="small"
                     disabled={this.getDisabledOldestButton()}
                     style={{ marginLeft: 20, marginTop: 10 }}
-                    onClick={ev => this.handleOldestClick(ev)}
+                    onClick={(ev) => this.handleOldestClick(ev)}
                   >
                     &lt;&lt;
                   </Button>
@@ -602,7 +602,7 @@ class ThroughputTestWindow extends React.Component {
                     size="small"
                     disabled={this.getDisabledLeftButton()}
                     style={{ marginLeft: 5, marginTop: 10 }}
-                    onClick={ev => this.handleLeftClick(ev)}
+                    onClick={(ev) => this.handleLeftClick(ev)}
                   >
                     &lt;
                   </Button>
@@ -614,7 +614,7 @@ class ThroughputTestWindow extends React.Component {
                     size="small"
                     disabled={this.getDisabledRightButton()}
                     style={{ marginLeft: 190, marginTop: 10 }}
-                    onClick={ev => this.handleRightClick(ev)}
+                    onClick={(ev) => this.handleRightClick(ev)}
                   >
                     &gt;
                   </Button>
@@ -626,7 +626,7 @@ class ThroughputTestWindow extends React.Component {
                     size="small"
                     disabled={this.getDisabledNewestButton()}
                     style={{ marginLeft: 5, marginTop: 10 }}
-                    onClick={ev => this.handleNewestClick(ev)}
+                    onClick={(ev) => this.handleNewestClick(ev)}
                   >
                     &gt;&gt;
                   </Button>
@@ -636,7 +636,7 @@ class ThroughputTestWindow extends React.Component {
             {showInfoPopup && (
               <InfoPopup
                 getInfoMessage={() => this.getInfoMessage()}
-                onSubmit={ev => this.handleInfoPopupClick(ev)}
+                onSubmit={(ev) => this.handleInfoPopupClick(ev)}
                 closePopup={this.hideInfoPopup.bind(this)}
               />
             )}

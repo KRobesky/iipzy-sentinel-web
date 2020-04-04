@@ -1,5 +1,4 @@
 import Defs from "iipzy-shared/src/defs";
-import { sleep } from "iipzy-shared/src/utils/utils";
 
 import http from "../ipc/httpService";
 
