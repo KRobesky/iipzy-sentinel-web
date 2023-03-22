@@ -34,6 +34,7 @@ import Defs from "iipzy-shared/src/defs";
 import cipher from "./utils/cipher";
 import cookie from "./utils/cookie";
 import sentinelInfo from "./utils/sentinelInfo";
+import localIPAddress from "./utils/localIPAddress";
 
 import FromSentinel from "./ipc/fromSentinel";
 import toSentinel from "./ipc/toSentinel";
@@ -49,9 +50,11 @@ console.log(window);
 
 const sentinelIPAddress =
   window.location.hostname === "localhost"
-    ? "192.168.1.72:8002"
+    ? "192.168.1.145:8002"
     : window.location.hostname + ":8002";
 console.log("sentinelIPAddress = " + sentinelIPAddress);
+
+localIPAddress.getLocalSubnet();
 
 /*
   Handling credentials.

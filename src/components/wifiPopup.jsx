@@ -97,6 +97,7 @@ class WiFiPopup extends React.Component {
 
     this.doRender();
   }
+  
   doRender() {
     this.setState({ count: this.state.count + 1 });
   }

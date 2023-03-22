@@ -2,6 +2,12 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
+By Ken
+
+To run while using vscode,
+On a fresh clone, run npm i in iipzy-shared and iipzy-sentinel-web
+npm run start
+
 In the project directory, you can run:
 
 ### `npm start`
