@@ -1,6 +1,7 @@
 import React from "react";
 import { Chart } from "react-google-charts";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import { Platform } from "react-native";
 
 //let app;
 
@@ -30,6 +31,7 @@ class Gauge extends React.Component {
       minorTicks: 5,
       max: 10
     };
+    this.overlayMarginTop = Platform.OS === 'ios' ? 5 : 50;
     //app = this;
   }
 
@@ -102,6 +104,7 @@ class Gauge extends React.Component {
 
     // const { classes } = this.props;
     // var style = this.props.style || { margin: 20 } || { width: "85%" };
+    const overlayMarginTop = this.overlayMarginTop;
 
     return (
       <div>
@@ -124,7 +127,7 @@ class Gauge extends React.Component {
                 {/*                 <div align="center" style={style}> */}
                 <div
                   align="center"
-                  style={{ width: "88%", marginLeft: 13, marginTop: 5 }}
+                  style={{ width: "88%", marginLeft: 13, marginTop: overlayMarginTop }}
                 >
                   <LinearProgress
                     variant="determinate"

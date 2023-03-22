@@ -80,6 +80,7 @@ class PingPlotWindow extends React.Component {
       this.zoomArray[this.zoomLevel].numSamples;
     this.prevTimeMillis = 0;
 
+    // ping
     this.pingArray = [];
     this.pingArray[0] = [
       "time",
@@ -91,6 +92,30 @@ class PingPlotWindow extends React.Component {
 
     for (let i = 1; i < this.numPoints + 1; i++) {
       this.pingArray[i] = [null, 0, null, null, null];
+    }
+
+    // rx_rate
+    this.rxRateArray = [];
+    this.rxRateArray[0] = [
+      "time",
+      "rx_mbits",
+      { type: "string", role: "tooltip" },
+    ];
+
+    for (let i = 1; i < this.numPoints + 1; i++) {
+      this.rxRateArray[i] = [null, 0, null];
+    }
+
+    // tx_rate
+    this.txRateArray = [];
+    this.txRateArray[0] = [
+      "time",
+      "tx_mbits",
+      { type: "string", role: "tooltip" },
+    ];
+
+    for (let i = 1; i < this.numPoints + 1; i++) {
+      this.txRateArray[i] = [null, 0, null];
     }
 
     this.maxEntries = 0;
@@ -106,7 +131,7 @@ class PingPlotWindow extends React.Component {
     this.allButtonsDisabled = false;
 
     this.selectedRow = -1;
-    this.chartEvents = [
+    this.pingChartEvents = [
       {
         eventName: "ready",
         callback: ({ chartWrapper, google }) => {
@@ -140,8 +165,16 @@ class PingPlotWindow extends React.Component {
     app = null;
   }
 
-  getData() {
+  getPingData() {
     return this.pingArray;
+  }
+ 
+  getRxRateData() {
+    return this.rxRateArray;
+  }
+ 
+  getTxRateData() {
+    return this.txRateArray;
   }
 
   getTitle() {
@@ -257,6 +290,8 @@ class PingPlotWindow extends React.Component {
     }
 
     this.pingArray.splice(1, ja.length);
+    this.rxRateArray.splice(1, ja.length);
+    this.txRateArray.splice(1, ja.length);
     for (let i = 0; i < ja.length; i++) {
       const joe = ja[i];
       const id = joe.id;
@@ -265,6 +300,10 @@ class PingPlotWindow extends React.Component {
       let millis = Number(jod["timeMillis"]);
       const date = new Date(jod["timeStamp"]);
       const dropped = jod["dropped"];
+      // netrate
+      const rx_rate_bits = jod["rx_rate_bits"];
+      const tx_rate_bits = jod["tx_rate_bits"];
+      //console.log("+++rx_rate_bits=" + rx_rate_bits + ", tx_rate_bits=" + tx_rate_bits);
 
       let droppedStyle = null;
       let tooltipStyle = null;
@@ -277,9 +316,8 @@ class PingPlotWindow extends React.Component {
         tooltipStyle = date.toLocaleString() + ", " + millis + " ms";
       }
       const idLinkIdStyle = JSON.stringify({ id, linkId, dropped });
-      //console.log("...idLinkIdStyle = " + idLinkIdStyle);
-
-      console.log("handlePingPlotData: entry[" + i + "], date =" + date);
+      // console.log("...idLinkIdStyle = " + idLinkIdStyle);
+      //console.log("handlePingPlotData: entry[" + i + "], date =" + date);
 
       this.pingArray.push([
         date,
@@ -288,6 +326,27 @@ class PingPlotWindow extends React.Component {
         tooltipStyle,
         idLinkIdStyle,
       ]);
+
+      let rx_mbits = this.round(rx_rate_bits / 1000000, 2);
+      //rx_mbits = Math.round(rx_mbits);
+      let tx_mbits = this.round(tx_rate_bits / 1000000, 2);
+      //tx_mbits = Math.round(tx_mbits);
+
+      const rxTooltipStyle = date.toLocaleString() + ", " + rx_mbits + " mbits";
+      const txTooltipStyle = date.toLocaleString() + ", " + tx_mbits + " mbits";
+
+      this.rxRateArray.push([
+        date,
+        rx_mbits,
+        rxTooltipStyle,
+      ]);
+
+       this.txRateArray.push([
+        date,
+        tx_mbits,
+        txTooltipStyle,
+      ]);
+
     }
 
     const nextCount = this.state.count + 1;
@@ -372,6 +431,16 @@ class PingPlotWindow extends React.Component {
       for (let i = 1; i < this.numPoints + 1; i++) {
         this.pingArray[i] = [null, 0, null, null, null];
       }
+    
+      this.rxRateArray.splice(1, this.rxRateArray.length - 1);
+      for (let i = 1; i < this.numPoints + 1; i++) {
+        this.rxRateArray[i] = [null, 0, 0, null];
+      }
+
+      this.txRateArray.splice(1, this.txRateArray.length - 1);
+      for (let i = 1; i < this.numPoints + 1; i++) {
+        this.txRateArray[i] = [null, 0, 0, null];
+      }
 
       const moveOffset = this.computeMoveOffset();
 
@@ -396,6 +465,16 @@ class PingPlotWindow extends React.Component {
       this.pingArray.splice(1, this.pingArray.length - 1);
       for (let i = 1; i < this.numPoints + 1; i++) {
         this.pingArray[i] = [null, 0, null, null, null];
+      }
+      
+      this.rxRateArray.splice(1, this.rxRateArray.length - 1);
+      for (let i = 1; i < this.numPoints + 1; i++) {
+        this.rxRateArray[i] = [null, 0, 0, null];
+      }
+       
+      this.txRateArray.splice(1, this.txRateArray.length - 1);
+      for (let i = 1; i < this.numPoints + 1; i++) {
+        this.txRateArray[i] = [null, 0, 0, null];
       }
 
       const moveOffset = this.computeMoveOffset();
@@ -464,32 +543,70 @@ class PingPlotWindow extends React.Component {
 
     const showSpinner =
       this.allButtonsDisabled && this.zoomLevel >= ZOOMLEVEL_1DAY;
+    const pingHeader = "Latency (" + this.getTitle() + ")";
+    const throughputUpHeader = "Throughput Up (" + this.getTitle() + ")";
+    const throughputDownHeader = "Throughput Down (" + this.getTitle() + ")";
 
     return (
       <div>
         <Navigator />
         {showSpinner && <SpinnerPopup />}
         <div style={{ marginLeft: 20, textAlign: "left" }}>
-          <p style={{ fontSize: "140%" }}>Ping Latency</p>
+          <p style={{ fontSize: "140%" }}>{pingHeader}</p>
         </div>
         {/*         <div style={{ display: "flex", maxWidth: 800 }}> */}
-        <div style={{ marginLeft: 0, marginTop: 0, marginBottom: 20 }}>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
           <Chart
             width={850}
             height={200}
             chartType="LineChart"
-            data={this.getData()}
+            data={this.getPingData()}
             chartEvents={this.chartEvents}
             options={{
               pointSize: 2,
               vAxis: { title: "latency (milliseconds)" },
               legend: { position: "none" },
-              title: this.getTitle(),
               titleTextStyle: { bold: false },
             }}
           />
         </div>
-        <div style={{ marginLeft: 0 }}>
+        <div style={{ marginLeft: 20, marginTop: 15, textAlign: "left" }}>
+          <p style={{ fontSize: "140%" }}>{ throughputDownHeader}</p>
+        </div>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
+          <Chart
+            width={850}
+            height={200}
+            chartType="LineChart"
+            data={this.getRxRateData()}
+            chartEvents={this.chartEvents}
+            options={{
+              pointSize: 2,
+              vAxis: { title: "throughput (mbits)" },
+              legend: { position: "none" },
+              titleTextStyle: { bold: false },
+            }}
+          />
+        </div>
+        <div style={{ marginLeft: 20, marginTop: 15, textAlign: "left" }}>
+          <p style={{ fontSize: "140%" }}>{throughputUpHeader}</p>
+        </div>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
+          <Chart
+            width={850}
+            height={200}
+            chartType="LineChart"
+            data={this.getTxRateData()}
+            chartEvents={this.chartEvents}
+            options={{
+              pointSize: 2,
+              vAxis: { title: "throughput (mbits)" },
+              legend: { position: "none" },
+              titleTextStyle: { bold: false },
+            }}
+          />
+        </div>
+        <div style={{ marginLeft: 0, marginTop: 40 }}>
           <table>
             <tbody>
               <tr>
@@ -655,6 +772,11 @@ class PingPlotWindow extends React.Component {
         </div>
       </div>
     );
+  }
+
+  round(value, precision) {
+    var multiplier = Math.pow(10, precision || 0);
+    return Math.round(value * multiplier) / multiplier;
   }
 }
 
