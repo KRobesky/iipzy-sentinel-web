@@ -434,12 +434,12 @@ class PingPlotWindow extends React.Component {
     
       this.rxRateArray.splice(1, this.rxRateArray.length - 1);
       for (let i = 1; i < this.numPoints + 1; i++) {
-        this.rxRateArray[i] = [null, 0, 0, null];
+        this.rxRateArray[i] = [null, 0, null];
       }
 
       this.txRateArray.splice(1, this.txRateArray.length - 1);
       for (let i = 1; i < this.numPoints + 1; i++) {
-        this.txRateArray[i] = [null, 0, 0, null];
+        this.txRateArray[i] = [null, 0, null];
       }
 
       const moveOffset = this.computeMoveOffset();
@@ -469,12 +469,12 @@ class PingPlotWindow extends React.Component {
       
       this.rxRateArray.splice(1, this.rxRateArray.length - 1);
       for (let i = 1; i < this.numPoints + 1; i++) {
-        this.rxRateArray[i] = [null, 0, 0, null];
+        this.rxRateArray[i] = [null, 0, null];
       }
        
       this.txRateArray.splice(1, this.txRateArray.length - 1);
       for (let i = 1; i < this.numPoints + 1; i++) {
-        this.txRateArray[i] = [null, 0, 0, null];
+        this.txRateArray[i] = [null, 0, null];
       }
 
       const moveOffset = this.computeMoveOffset();
