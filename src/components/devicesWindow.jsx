@@ -39,6 +39,14 @@ class DeviceTable extends React.Component {
                       {item.displayName}
                     </div>
                   </td>
+                  <td
+                    style={{ cursor: "pointer" }}
+                    onClick={() => this.props.onClick(item.ipAddress)}
+                  >
+                    <div style={{ textAlign: "left", marginLeft: 20 }}>
+                      {item.comment}
+                    </div>
+                  </td>
                 </tr>
               )
           )}
