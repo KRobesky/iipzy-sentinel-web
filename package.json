@@ -14,6 +14,7 @@
     "bootstrap": "^4.4.1",
     "iipzy-shared": "file:../iipzy-shared",
     "js-cookie": "^2.2.1",
+    "moment": "^2.29.4",
     "react": "^16.12.0",
     "react-bootstrap": "^1.0.0-beta.16",
     "react-dom": "^16.12.0",

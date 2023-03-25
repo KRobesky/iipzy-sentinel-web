@@ -2,6 +2,8 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 
+import moment from "moment";
+
 import Defs from "iipzy-shared/src/defs";
 
 import eventManager from "../ipc/eventManager";
@@ -84,8 +86,10 @@ class ThroughputTestWindow extends React.Component {
       "throughputTestWindow.getTimeOfTest: " +
         JSON.stringify(this.state.timeOfTest)
     );
+  
     if (this.isPlainObject(this.state.timeOfTest)) return "<time-of-test>";
-    return this.state.timeOfTest;
+    const timeOfTest = moment(new Date(this.state.timeOfTest)).format('ddd, MMMM Do YYYY, h:mm:ss a');
+    return timeOfTest.toString();
   }
 
   getNominalLatency() {
