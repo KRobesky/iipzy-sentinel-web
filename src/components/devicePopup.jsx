@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
+import moment from "moment";
 
 //import Defs from "iipzy-shared/src/defs";
 
@@ -128,6 +129,9 @@ class DevicePopup extends React.Component {
 
     const device = DevicePopup.device;
     const showInfoPopup = DevicePopup.showInfoPopup;
+    let latestGoodPing = "";
+    if (device.latestGoodPing)
+      latestGoodPing = moment(new Date(device.latestGoodPing)).format('ddd, MMMM Do YYYY, h:mm:ss a').toString();
 
     return (
       <div className="popup">
@@ -206,7 +210,7 @@ class DevicePopup extends React.Component {
                   <tr>
                     <td>Latest Good Ping:</td>
                     <td>
-                      {device.latestGoodPing ? device.latestGoodPing : ""}
+                      {latestGoodPing}
                     </td>
                   </tr>
                   <tr>
