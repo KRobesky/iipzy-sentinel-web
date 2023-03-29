@@ -44,7 +44,7 @@ class NavBar extends React.Component {
                 onClick={this.handleClick}
                 to={Defs.urlPingPlot}
               >
-                Ping Chart
+                Performance Charts
               </NavLink>
             )}
             {!needLogin && !needSettings && (
