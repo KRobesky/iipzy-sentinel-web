@@ -441,7 +441,7 @@ class SettingsWindow extends React.Component {
                         />
                         &nbsp;Simulate Offline&nbsp;&nbsp;
                       </tr>
-                      <tr>
+                      {/* <tr>
                         <table>
                           <tbody>
                             <tr>
@@ -470,7 +470,7 @@ class SettingsWindow extends React.Component {
                             </tr>
                           </tbody>
                         </table>
-                      </tr>
+                      </tr> */}
                       <tr>&nbsp;</tr>
                       <tr>
                         <Button
