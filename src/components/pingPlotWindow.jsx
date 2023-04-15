@@ -118,6 +118,30 @@ class PingPlotWindow extends React.Component {
       this.txRateArray[i] = [null, 0, null];
     }
 
+    // rx_rate_pri
+    this.rxRatePriArray = [];
+    this.rxRatePriArray[0] = [
+      "time",
+      "rx_pri_mbits",
+      { type: "string", role: "tooltip" },
+    ];
+
+    for (let i = 1; i < this.numPoints + 1; i++) {
+      this.rxRatePriArray[i] = [null, 0, null];
+    }
+
+    // tx_rate_pri
+    this.txRatePriArray = [];
+    this.txRatePriArray[0] = [
+      "time",
+      "tx_pri_mbits",
+      { type: "string", role: "tooltip" },
+    ];
+
+    for (let i = 1; i < this.numPoints + 1; i++) {
+      this.txRatePriArray[i] = [null, 0, null];
+    }
+
     this.maxEntries = 0;
     this.numEntries = 0;
     this.oldest = false;
@@ -175,6 +199,14 @@ class PingPlotWindow extends React.Component {
  
   getTxRateData() {
     return this.txRateArray;
+  }
+
+  getRxRatePriData() {
+    return this.rxRatePriArray;
+  }
+ 
+  getTxRatePriData() {
+    return this.txRatePriArray;
   }
 
   getTitle() {
@@ -292,6 +324,8 @@ class PingPlotWindow extends React.Component {
     this.pingArray.splice(1, ja.length);
     this.rxRateArray.splice(1, ja.length);
     this.txRateArray.splice(1, ja.length);
+    this.rxRatePriArray.splice(1, ja.length);
+    this.txRatePriArray.splice(1, ja.length);
     for (let i = 0; i < ja.length; i++) {
       const joe = ja[i];
       const id = joe.id;
@@ -303,6 +337,8 @@ class PingPlotWindow extends React.Component {
       // netrate
       const rx_rate_bits = jod["rx_rate_bits"];
       const tx_rate_bits = jod["tx_rate_bits"];
+      const rx_rate_pri_bits = jod["rx_rate_dns_bits"] + jod["rx_rate_rt_bits"];
+      const tx_rate_pri_bits = jod["tx_rate_dns_bits"] + jod["tx_rate_rt_bits"];
       //console.log("+++rx_rate_bits=" + rx_rate_bits + ", tx_rate_bits=" + tx_rate_bits);
 
       let droppedStyle = null;
@@ -331,6 +367,10 @@ class PingPlotWindow extends React.Component {
       //rx_mbits = Math.round(rx_mbits);
       let tx_mbits = this.round(tx_rate_bits / 1000000, 2);
       //tx_mbits = Math.round(tx_mbits);
+      let rx_pri_mbits = this.round(rx_rate_pri_bits / 1000000, 2);
+      //rx_mbits = Math.round(rx_mbits);
+      let tx_pri_mbits = this.round(tx_rate_pri_bits / 1000000, 2);
+      //tx_mbits = Math.round(tx_mbits);
 
       const rxTooltipStyle = date.toLocaleString() + ", " + rx_mbits + " mbits";
       const txTooltipStyle = date.toLocaleString() + ", " + tx_mbits + " mbits";
@@ -344,6 +384,18 @@ class PingPlotWindow extends React.Component {
        this.txRateArray.push([
         date,
         tx_mbits,
+        txTooltipStyle,
+      ]);
+
+      this.rxRatePriArray.push([
+        date,
+        rx_pri_mbits,
+        rxTooltipStyle,
+      ]);
+
+       this.txRatePriArray.push([
+        date,
+        tx_pri_mbits,
         txTooltipStyle,
       ]);
 
@@ -546,16 +598,18 @@ class PingPlotWindow extends React.Component {
     const pingHeader = "Latency (" + this.getTitle() + ")";
     const throughputUpHeader = "Throughput Up (" + this.getTitle() + ")";
     const throughputDownHeader = "Throughput Down (" + this.getTitle() + ")";
+    const throughputUpHeaderPri = "Throughput Up - High Priority (" + this.getTitle() + ")";
+    const throughputDownHeaderPri = "Throughput Down - High Priority (" + this.getTitle() + ")";
 
     return (
       <div>
         <Navigator />
         {showSpinner && <SpinnerPopup />}
         <div style={{ marginLeft: 20, textAlign: "left" }}>
-          <p style={{ fontSize: "140%" }}>{pingHeader}</p>
+          <p style={{ fontSize: "80%" }}>{pingHeader}</p>
         </div>
         {/*         <div style={{ display: "flex", maxWidth: 800 }}> */}
-        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: -6 }}>
           <Chart
             width={850}
             height={200}
@@ -564,16 +618,17 @@ class PingPlotWindow extends React.Component {
             chartEvents={this.chartEvents}
             options={{
               pointSize: 2,
+              hAxis: {textPosition: "none" },
               vAxis: { title: "latency (milliseconds)" },
               legend: { position: "none" },
               titleTextStyle: { bold: false },
             }}
           />
         </div>
-        <div style={{ marginLeft: 20, marginTop: 15, textAlign: "left" }}>
-          <p style={{ fontSize: "140%" }}>{ throughputDownHeader}</p>
+        <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
+          <p style={{ fontSize: "80%" }}>{ throughputDownHeader}</p>
         </div>
-        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom:  -6 }}>
           <Chart
             width={850}
             height={200}
@@ -582,21 +637,60 @@ class PingPlotWindow extends React.Component {
             chartEvents={this.chartEvents}
             options={{
               pointSize: 2,
+              hAxis: {textPosition: "none" },
               vAxis: { title: "throughput (mbits)" },
               legend: { position: "none" },
               titleTextStyle: { bold: false },
             }}
           />
         </div>
-        <div style={{ marginLeft: 20, marginTop: 15, textAlign: "left" }}>
-          <p style={{ fontSize: "140%" }}>{throughputUpHeader}</p>
+        <div style={{ marginLeft: 20, marginTop: 5, textAlign: "left" }}>
+          <p style={{ fontSize: "80%" }}>{throughputUpHeader}</p>
         </div>
-        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: -6 }}>
           <Chart
             width={850}
             height={200}
             chartType="LineChart"
             data={this.getTxRateData()}
+            chartEvents={this.chartEvents}
+            options={{
+              pointSize: 2,
+              hAxis: {textPosition: "none" },
+              vAxis: { title: "throughput (mbits)" },
+              legend: { position: "none" },
+              titleTextStyle: { bold: false },
+            }}
+          />
+        </div>
+        <div style={{ marginLeft: 20, marginTop: 5, textAlign: "left" }}>
+          <p style={{ fontSize: "80%" }}>{ throughputDownHeaderPri}</p>
+        </div>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: -6 }}>
+          <Chart
+            width={850}
+            height={200}
+            chartType="LineChart"
+            data={this.getRxRatePriData()}
+            chartEvents={this.chartEvents}
+            options={{
+              pointSize: 2,
+              hAxis: {textPosition: "none" },
+              vAxis: { title: "throughput (mbits)" },
+              legend: { position: "none" },
+              titleTextStyle: { bold: false },
+            }}
+          />
+        </div>
+        <div style={{ marginLeft: 20, marginTop: 5, textAlign: "left" }}>
+          <p style={{ fontSize: "80%" }}>{throughputUpHeaderPri}</p>
+        </div>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: -6 }}>
+          <Chart
+            width={850}
+            height={200}
+            chartType="LineChart"
+            data={this.getTxRatePriData()}
             chartEvents={this.chartEvents}
             options={{
               pointSize: 2,
