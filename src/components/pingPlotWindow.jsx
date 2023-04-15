@@ -289,6 +289,8 @@ class PingPlotWindow extends React.Component {
       this.selectedRow--;
     }
 
+    console.log("...handlePingPlotData: " + JSON.stringify(jo, null, 2));
+
     this.allButtonsDisabled = false;
 
     this.maxEntries = jo.maxEntries;
