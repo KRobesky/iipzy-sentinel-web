@@ -225,7 +225,7 @@ class ThroughputTestWindow extends React.Component {
     toSentinel.send(Defs.ipcLinkTo, Defs.urlLogin);
   }
 
-  handleClearDials(jsonResults) {
+  handleClearDials() {
     this.setState({
       timeOfTest: null,
       downloadBloat: 0,
@@ -242,19 +242,18 @@ class ThroughputTestWindow extends React.Component {
     });
   }
 
-  handleTestingState(jsonResults) {
-    if (jsonResults === "{}") return;
+  handleTestingState(joResults) {
+    if (!joResults || joResults === {}) return;
 
-    console.log("throughputTestWindow.handleTestingState: " + jsonResults);
+    console.log("throughputTestWindow.handleTestingState: " + JSON.stringify(joResults));
 
-    const ret = JSON.parse(jsonResults);
-    if (ret) {
+    if (joResults) {
       const {
         testState: _testState,
         hideButton: _hideButton,
         // testBusy: _testBusy,
         // failed: _failed
-      } = ret;
+      } = joResults;
 
       if (typeof _testState !== "undefined") {
         const hideButton =
@@ -345,12 +344,11 @@ class ThroughputTestWindow extends React.Component {
     this.setState({ timeOfTest });
   }
 
-  handleThroughputTestStatus(data) {
+  handleThroughputTestStatus(joResult) {
     console.log("throughputTestWindow.handleThroughputTestStatus");
-    const response = JSON.parse(data);
-    console.log(JSON.stringify(response, null, 2));
-    ThroughputTestWindow.position = response.position;
-    const status = response.status;
+    console.log(JSON.stringify(joResult, null, 2));
+    ThroughputTestWindow.position = joResult.position;
+    const status = joResult.status;
     this.setState({
       timeOfTest: status.timeOfTest,
       numTicksNominalLatency: status.nominalLatency.numTicks,
