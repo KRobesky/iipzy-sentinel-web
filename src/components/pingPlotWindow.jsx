@@ -603,6 +603,9 @@ class PingPlotWindow extends React.Component {
     const throughputUpHeaderPri = "Throughput Up - High Priority (" + this.getTitle() + ")";
     const throughputDownHeaderPri = "Throughput Down - High Priority (" + this.getTitle() + ")";
 
+    const throughputHeader = "Throughput (" + this.getTitle() + ")";
+    const throughputHeaderPri = "Throughput - High Priority (" + this.getTitle() + ")";
+
     return (
       <div>
         <Navigator />
@@ -611,7 +614,7 @@ class PingPlotWindow extends React.Component {
           <p style={{ fontSize: "80%" }}>{pingHeader}</p>
         </div>
         {/*         <div style={{ display: "flex", maxWidth: 800 }}> */}
-        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: -6 }}>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
           <Chart
             width={850}
             height={200}
@@ -627,29 +630,10 @@ class PingPlotWindow extends React.Component {
             }}
           />
         </div>
-        <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
-          <p style={{ fontSize: "80%" }}>{ throughputDownHeader}</p>
-        </div>
-        <div style={{ marginLeft: 0, marginTop: -18, marginBottom:  -6 }}>
-          <Chart
-            width={850}
-            height={200}
-            chartType="LineChart"
-            data={this.getRxRateData()}
-            chartEvents={this.chartEvents}
-            options={{
-              pointSize: 2,
-              hAxis: {textPosition: "none" },
-              vAxis: { title: "throughput (mbits)" },
-              legend: { position: "none" },
-              titleTextStyle: { bold: false },
-            }}
-          />
-        </div>
         <div style={{ marginLeft: 20, marginTop: 5, textAlign: "left" }}>
-          <p style={{ fontSize: "80%" }}>{throughputUpHeader}</p>
+          <p style={{ fontSize: "80%" }}>{throughputHeader}</p>
         </div>
-        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: -6 }}>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
           <Chart
             width={850}
             height={200}
@@ -665,27 +649,24 @@ class PingPlotWindow extends React.Component {
             }}
           />
         </div>
-        <div style={{ marginLeft: 20, marginTop: 5, textAlign: "left" }}>
-          <p style={{ fontSize: "80%" }}>{ throughputDownHeaderPri}</p>
-        </div>
-        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: -6 }}>
+        <div style={{ marginLeft: 0, marginTop: -30, marginBottom:  -6 }}>
           <Chart
             width={850}
             height={200}
             chartType="LineChart"
-            data={this.getRxRatePriData()}
+            data={this.getRxRateData()}
             chartEvents={this.chartEvents}
             options={{
               pointSize: 2,
               hAxis: {textPosition: "none" },
-              vAxis: { title: "throughput (mbits)" },
+              vAxis: { title: "throughput (mbits)", direction: -1 },
               legend: { position: "none" },
               titleTextStyle: { bold: false },
             }}
           />
         </div>
         <div style={{ marginLeft: 20, marginTop: 5, textAlign: "left" }}>
-          <p style={{ fontSize: "80%" }}>{throughputUpHeaderPri}</p>
+          <p style={{ fontSize: "80%" }}>{throughputHeaderPri}</p>
         </div>
         <div style={{ marginLeft: 0, marginTop: -18, marginBottom: -6 }}>
           <Chart
@@ -696,7 +677,23 @@ class PingPlotWindow extends React.Component {
             chartEvents={this.chartEvents}
             options={{
               pointSize: 2,
+              hAxis: {textPosition: "none" },
               vAxis: { title: "throughput (mbits)" },
+              legend: { position: "none" },
+              titleTextStyle: { bold: false },
+            }}
+          />
+        </div>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: -6 }}>
+          <Chart
+            width={850}
+            height={200}
+            chartType="LineChart"
+            data={this.getRxRatePriData()}
+            chartEvents={this.chartEvents}
+            options={{
+              pointSize: 2,
+              vAxis: { title: "throughput (mbits)", direction: -1 },
               legend: { position: "none" },
               titleTextStyle: { bold: false },
             }}
