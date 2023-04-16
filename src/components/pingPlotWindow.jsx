@@ -597,109 +597,111 @@ class PingPlotWindow extends React.Component {
 
     const showSpinner =
       this.allButtonsDisabled && this.zoomLevel >= ZOOMLEVEL_1DAY;
-    const pingHeader = "Latency (" + this.getTitle() + ")";
+    const pingHeader = "Latency Milliseconds (" + this.getTitle() + ")";
+    /*
     const throughputUpHeader = "Throughput Up (" + this.getTitle() + ")";
     const throughputDownHeader = "Throughput Down (" + this.getTitle() + ")";
     const throughputUpHeaderPri = "Throughput Up - High Priority (" + this.getTitle() + ")";
     const throughputDownHeaderPri = "Throughput Down - High Priority (" + this.getTitle() + ")";
+    */
+    const throughputHeader = "Throughput Mbits (" + this.getTitle() + ")";
+    const throughputHeaderPri = "Throughput Mbits - High Priority (" + this.getTitle() + ")";
 
-    const throughputHeader = "Throughput (" + this.getTitle() + ")";
-    const throughputHeaderPri = "Throughput - High Priority (" + this.getTitle() + ")";
+    //               vAxis: { title: "latency (milliseconds)" },
 
     return (
       <div>
         <Navigator />
         {showSpinner && <SpinnerPopup />}
         <div style={{ marginLeft: 20, textAlign: "left" }}>
-          <p style={{ fontSize: "80%" }}>{pingHeader}</p>
+          <p style={{ fontSize: "80%", fontWeight: "bold" }}>{pingHeader}</p>
         </div>
         {/*         <div style={{ display: "flex", maxWidth: 800 }}> */}
         <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
           <Chart
             width={850}
-            height={200}
+            height={180}
             chartType="LineChart"
             data={this.getPingData()}
             chartEvents={this.chartEvents}
             options={{
               pointSize: 2,
               hAxis: {textPosition: "none" },
-              vAxis: { title: "latency (milliseconds)" },
               legend: { position: "none" },
               titleTextStyle: { bold: false },
             }}
           />
         </div>
-        <div style={{ marginLeft: 20, marginTop: 5, textAlign: "left" }}>
-          <p style={{ fontSize: "80%" }}>{throughputHeader}</p>
+        <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
+          <p style={{ fontSize: "80%", fontWeight: "bold" }}>{throughputHeader}</p>
         </div>
         <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
           <Chart
             width={850}
-            height={200}
+            height={180}
             chartType="LineChart"
             data={this.getTxRateData()}
             chartEvents={this.chartEvents}
             options={{
               pointSize: 2,
               hAxis: {textPosition: "none" },
-              vAxis: { title: "throughput (mbits)" },
+              vAxis: { title: "up", titleTextStyle: {bold: true} },
               legend: { position: "none" },
               titleTextStyle: { bold: false },
             }}
           />
         </div>
-        <div style={{ marginLeft: 0, marginTop: -30, marginBottom:  -6 }}>
+        <div style={{ marginLeft: 0, marginTop: -30, marginBottom:  0 }}>
           <Chart
             width={850}
-            height={200}
+            height={180}
             chartType="LineChart"
             data={this.getRxRateData()}
             chartEvents={this.chartEvents}
             options={{
               pointSize: 2,
               hAxis: {textPosition: "none" },
-              vAxis: { title: "throughput (mbits)", direction: -1 },
+              vAxis: { title: "down", direction: -1, titleTextStyle: {bold: true} },
               legend: { position: "none" },
               titleTextStyle: { bold: false },
             }}
           />
         </div>
-        <div style={{ marginLeft: 20, marginTop: 5, textAlign: "left" }}>
-          <p style={{ fontSize: "80%" }}>{throughputHeaderPri}</p>
+        <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
+          <p style={{ fontSize: "80%", fontWeight: "bold" }}>{throughputHeaderPri}</p>
         </div>
-        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: -6 }}>
+        <div style={{ marginLeft: 0, marginTop: -16, marginBottom: 0 }}>
           <Chart
             width={850}
-            height={200}
+            height={180}
             chartType="LineChart"
             data={this.getTxRatePriData()}
             chartEvents={this.chartEvents}
             options={{
               pointSize: 2,
               hAxis: {textPosition: "none" },
-              vAxis: { title: "throughput (mbits)" },
+              vAxis: { title: "up", titleTextStyle: {bold: true} },
               legend: { position: "none" },
               titleTextStyle: { bold: false },
             }}
           />
         </div>
-        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: -6 }}>
+        <div style={{ marginLeft: 0, marginTop: -30, marginBottom: 0 }}>
           <Chart
             width={850}
-            height={200}
+            height={180}
             chartType="LineChart"
             data={this.getRxRatePriData()}
             chartEvents={this.chartEvents}
             options={{
               pointSize: 2,
-              vAxis: { title: "throughput (mbits)", direction: -1 },
+              vAxis: { title: "down", direction: -1, titleTextStyle: {bold: true} },
               legend: { position: "none" },
               titleTextStyle: { bold: false },
             }}
           />
         </div>
-        <div style={{ marginLeft: 0, marginTop: 40 }}>
+        <div style={{ marginLeft: 0, marginTop: 10 }}>
           <table>
             <tbody>
               <tr>
