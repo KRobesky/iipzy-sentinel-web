@@ -67,6 +67,10 @@ class SettingsWindow extends React.Component {
     return SettingsWindow.settings.simulateDroppedPackets;
   }
 
+  getSimulateSavesChecked() {
+    return SettingsWindow.settings.simulateSaves;
+  }
+
   getSimulateOfflineChecked() {
     return SettingsWindow.settings.simulateOffline;
   }
@@ -184,6 +188,19 @@ class SettingsWindow extends React.Component {
     setSettings(
       "simulateDroppedPackets",
       SettingsWindow.settings.simulateDroppedPackets
+    );
+  }
+
+  handleSimulateSavesClick(ev) {
+    console.log(
+      "SettingsWindow.handleSimulateSavesClick: " + ev.target.checked
+    );
+    SettingsWindow.settings.simulateSaves = ev.target.checked;
+    SettingsWindow.inProgress = true;
+    this.doRender();
+    setSettings(
+      "simulateDroppedPackets",
+      SettingsWindow.settings.simulateSaves
     );
   }
 
@@ -430,6 +447,18 @@ class SettingsWindow extends React.Component {
                           }
                         />
                         &nbsp;Simulate Dropped Packets&nbsp;&nbsp;
+                      </tr>
+                      <tr>
+                        <input
+                          type="checkbox"
+                          name="action-simulate-saves"
+                          checked={this.getSimulateSavesChecked()}
+                          disabled={disabledWhileUpdating}
+                          onChange={(ev) =>
+                            this.handleSimulateSavesClick(ev)
+                          }
+                        />
+                        &nbsp;Simulate Saves&nbsp;&nbsp;
                       </tr>
                       <tr>
                         <input
