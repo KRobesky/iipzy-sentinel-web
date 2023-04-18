@@ -199,7 +199,7 @@ class SettingsWindow extends React.Component {
     SettingsWindow.inProgress = true;
     this.doRender();
     setSettings(
-      "simulateDroppedPackets",
+      "simulateSaves",
       SettingsWindow.settings.simulateSaves
     );
   }
