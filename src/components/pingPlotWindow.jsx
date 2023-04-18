@@ -967,7 +967,7 @@ class PingPlotWindow extends React.Component {
             }}
           />
         </div>
-        <div style={{ marginLeft: 0, marginTop: -18, marginBottom:  0 }}>
+        <div style={{ marginLeft: 0, marginTop: -16, marginBottom:  0 }}>
           <Chart
             width={850}
             height={140}
