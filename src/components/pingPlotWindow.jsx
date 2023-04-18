@@ -80,6 +80,19 @@ class PingPlotWindow extends React.Component {
       this.zoomArray[this.zoomLevel].numSamples;
     this.prevTimeMillis = 0;
 
+     // timeline
+    this.timeLineArray = [];
+    this.timeLineArray[0] = [
+      "time",
+      "status",
+      { type: "string", role: "style" },
+      { type: "string", role: "tooltip" },
+    ];
+
+    for (let i = 1; i < this.numPoints + 1; i++) {
+      this.timeLineArray[i] = [null, 0, null, null];
+    }
+
     // ping
     this.pingArray = [];
     this.pingArray[0] = [
@@ -142,6 +155,30 @@ class PingPlotWindow extends React.Component {
       this.txRatePriArray[i] = [null, 0, null];
     }
 
+    // cpu_utilization
+    this.cpuUtlzArray = [];
+    this.cpuUtlzArray[0] = [
+      "time",
+      "cpu_utlz",
+      { type: "string", role: "tooltip" },
+    ];
+
+    for (let i = 1; i < this.numPoints + 1; i++) {
+      this.cpuUtlzArray[i] = [null, 0, null];
+    }
+
+    // cpu_temperature
+    this.cpuTempArray = [];
+    this.cpuTempArray[0] = [
+      "time",
+      "cpu_temp",
+      { type: "string", role: "tooltip" },
+    ];
+
+    for (let i = 1; i < this.numPoints + 1; i++) {
+      this.cpuTempArray[i] = [null, 0, null];
+    }
+
     this.maxEntries = 0;
     this.numEntries = 0;
     this.oldest = false;
@@ -189,6 +226,10 @@ class PingPlotWindow extends React.Component {
     app = null;
   }
 
+  getTimeLineData() {
+    return this.timeLineArray;
+  }
+
   getPingData() {
     return this.pingArray;
   }
@@ -207,6 +248,14 @@ class PingPlotWindow extends React.Component {
  
   getTxRatePriData() {
     return this.txRatePriArray;
+  }
+   
+  getCpuUtlzData() {
+    return this.cpuUtlzArray;
+  }
+     
+  getCpuTempData() {
+    return this.cpuTempArray;
   }
 
   getTitle() {
@@ -323,26 +372,42 @@ class PingPlotWindow extends React.Component {
       if (this.selectedRow >= 0) this.selectedRow--;
     }
 
+    this.timeLineArray.splice(1, ja.length);
     this.pingArray.splice(1, ja.length);
     this.rxRateArray.splice(1, ja.length);
     this.txRateArray.splice(1, ja.length);
     this.rxRatePriArray.splice(1, ja.length);
     this.txRatePriArray.splice(1, ja.length);
+    this.cpuUtlzArray.splice(1, ja.length);
+    this.cpuTempArray.splice(1, ja.length);
     for (let i = 0; i < ja.length; i++) {
       const joe = ja[i];
       const id = joe.id;
       const linkId = joe.linkId;
       const jod = joe.data;
-      let millis = Number(jod["timeMillis"]);
+
       const date = new Date(jod["timeStamp"]);
       const dropped = jod["dropped"];
-      // netrate
-      const rx_rate_bits = jod["rx_rate_bits"];
-      const tx_rate_bits = jod["tx_rate_bits"];
-      const rx_rate_pri_bits = jod["rx_rate_dns_bits"] + jod["rx_rate_rt_bits"];
-      const tx_rate_pri_bits = jod["tx_rate_dns_bits"] + jod["tx_rate_rt_bits"];
-      //console.log("+++rx_rate_bits=" + rx_rate_bits + ", tx_rate_bits=" + tx_rate_bits);
 
+      // timeline
+      const timeLineStatus = 1;
+      const tlStatusStyle = dropped ? "point { size: 10; fill-color: #a52714; shape-type: square;  }" 
+                                    : "point { size: 10; fill-color: #109618; shape-type: square;  }" 
+      //const tlStatusStyle = "point { sfill-color: #a52714; }";
+      //const tlStatusStyle = null;
+      const tlTooltipStyle = date.toLocaleString() + ", ok";
+
+      this.timeLineArray.push([
+        date,
+        timeLineStatus,
+        tlStatusStyle,
+        tlTooltipStyle,
+      ]);
+
+      // ping
+      let millis = Number(jod["timeMillis"]);
+
+      //const dropped = jod["dropped"];
       let droppedStyle = null;
       let tooltipStyle = null;
       if (dropped) {
@@ -353,6 +418,7 @@ class PingPlotWindow extends React.Component {
         this.prevTimeMillis = millis;
         tooltipStyle = date.toLocaleString() + ", " + millis + " ms";
       }
+
       const idLinkIdStyle = JSON.stringify({ id, linkId, dropped });
       // console.log("...idLinkIdStyle = " + idLinkIdStyle);
       //console.log("handlePingPlotData: entry[" + i + "], date =" + date);
@@ -364,6 +430,13 @@ class PingPlotWindow extends React.Component {
         tooltipStyle,
         idLinkIdStyle,
       ]);
+
+      // netrate
+      const rx_rate_bits = jod["rx_rate_bits"];
+      const tx_rate_bits = jod["tx_rate_bits"];
+      const rx_rate_pri_bits = jod["rx_rate_dns_bits"] + jod["rx_rate_rt_bits"];
+      const tx_rate_pri_bits = jod["tx_rate_dns_bits"] + jod["tx_rate_rt_bits"];
+      //console.log("+++rx_rate_bits=" + rx_rate_bits + ", tx_rate_bits=" + tx_rate_bits);
 
       let rx_mbits = this.round(rx_rate_bits / 1000000, 2);
       //rx_mbits = Math.round(rx_mbits);
@@ -401,6 +474,25 @@ class PingPlotWindow extends React.Component {
         txTooltipStyle,
       ]);
 
+      // cpu utilization
+      const cpu_utlz = jod["cpu_utlz_user"] + jod["cpu_utlz_nice"] + jod["cpu_utlz_system"] + jod["cpu_utlz_iowait"] + jod["cpu_utlz_steal"];
+      const cpuUtlzTooltipStyle = date.toLocaleString() + ", " + cpu_utlz + "%";
+
+      this.cpuUtlzArray.push([
+        date,
+        cpu_utlz,
+        cpuUtlzTooltipStyle,
+      ]);
+
+      // cpu temperature
+      const cpu_temp = jod["temp_celsius"];
+      const cpuTempTooltipStyle = date.toLocaleString() + ", " + cpu_temp + " celsius";
+      
+      this.cpuTempArray.push([
+        date,
+        cpu_temp,
+        cpuTempTooltipStyle,
+      ]);
     }
 
     const nextCount = this.state.count + 1;
@@ -481,6 +573,11 @@ class PingPlotWindow extends React.Component {
         this.zoomArray[this.zoomLevel].numPoints *
         this.zoomArray[this.zoomLevel].numSamples;
 
+      this.timeLineArray.splice(1, this.timeLineArray.length - 1);
+      for (let i = 1; i < this.numPoints + 1; i++) {
+        this.timeLineArray[i] = [null, 0, null, null];
+      }
+
       this.pingArray.splice(1, this.pingArray.length - 1);
       for (let i = 1; i < this.numPoints + 1; i++) {
         this.pingArray[i] = [null, 0, null, null, null];
@@ -494,6 +591,16 @@ class PingPlotWindow extends React.Component {
       this.txRateArray.splice(1, this.txRateArray.length - 1);
       for (let i = 1; i < this.numPoints + 1; i++) {
         this.txRateArray[i] = [null, 0, null];
+      }
+      
+      this.cpuUtlzArray.splice(1, this.cpuUtlzArray.length - 1);
+      for (let i = 1; i < this.numPoints + 1; i++) {
+        this.cpuUtlzArray[i] = [null, 0, null];
+      }
+            
+      this.cpuTempArray.splice(1, this.cpuTempArray.length - 1);
+      for (let i = 1; i < this.numPoints + 1; i++) {
+        this.cpuTempArray[i] = [null, 0, null];
       }
 
       const moveOffset = this.computeMoveOffset();
@@ -516,6 +623,11 @@ class PingPlotWindow extends React.Component {
         this.zoomArray[this.zoomLevel].numPoints *
         this.zoomArray[this.zoomLevel].numSamples;
 
+      this.timeLineArray.splice(1, this.timeLineArray.length - 1);
+      for (let i = 1; i < this.numPoints + 1; i++) {
+        this.timeLineArray[i] = [null, 0, null, null];
+      }
+
       this.pingArray.splice(1, this.pingArray.length - 1);
       for (let i = 1; i < this.numPoints + 1; i++) {
         this.pingArray[i] = [null, 0, null, null, null];
@@ -529,6 +641,16 @@ class PingPlotWindow extends React.Component {
       this.txRateArray.splice(1, this.txRateArray.length - 1);
       for (let i = 1; i < this.numPoints + 1; i++) {
         this.txRateArray[i] = [null, 0, null];
+      }
+   
+      this.cpuUtlzArray.splice(1, this.cpuUtlzArray.length - 1);
+      for (let i = 1; i < this.numPoints + 1; i++) {
+        this.cpuUtlzArray[i] = [null, 0, null];
+      }
+         
+      this.cpuTempArray.splice(1, this.cpuTempArray.length - 1);
+      for (let i = 1; i < this.numPoints + 1; i++) {
+        this.cpuTempArray[i] = [null, 0, null];
       }
 
       const moveOffset = this.computeMoveOffset();
@@ -597,111 +719,51 @@ class PingPlotWindow extends React.Component {
 
     const showSpinner =
       this.allButtonsDisabled && this.zoomLevel >= ZOOMLEVEL_1DAY;
-    const pingHeader = "Latency Milliseconds (" + this.getTitle() + ")";
+    const timeLineHeader = this.getTitle();
+    const pingHeader = "Latency Milliseconds";
     /*
     const throughputUpHeader = "Throughput Up (" + this.getTitle() + ")";
     const throughputDownHeader = "Throughput Down (" + this.getTitle() + ")";
     const throughputUpHeaderPri = "Throughput Up - High Priority (" + this.getTitle() + ")";
     const throughputDownHeaderPri = "Throughput Down - High Priority (" + this.getTitle() + ")";
     */
-    const throughputHeader = "Throughput Mbits (" + this.getTitle() + ")";
-    const throughputHeaderPri = "Throughput Mbits - High Priority (" + this.getTitle() + ")";
+    const throughputHeader = "Throughput Mbits";
+    const throughputHeaderPri = "Throughput Mbits - High Priority";
+    const cpuUtlzHeader = "CPU Utilization";
+    const cpuTempHeader = "CPU Temperature";
 
     //               vAxis: { title: "latency (milliseconds)" },
+    //hAxis: {baseline: {color: 'transparent'}, gridlines: {color: 'transparent'}},
 
     return (
       <div>
         <Navigator />
         {showSpinner && <SpinnerPopup />}
         <div style={{ marginLeft: 20, textAlign: "left" }}>
-          <p style={{ fontSize: "80%", fontWeight: "bold" }}>{pingHeader}</p>
+          <p style={{ fontSize: "80%", fontWeight: "bold" }}>{timeLineHeader}</p>
         </div>
-        {/*         <div style={{ display: "flex", maxWidth: 800 }}> */}
-        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
+        <div style={{ marginLeft: 0, marginTop: -20, marginBottom: 0 }}>
           <Chart
-            width={850}
-            height={180}
+            width={750}
+            height={80}
             chartType="LineChart"
-            data={this.getPingData()}
+            data={this.getTimeLineData()}
             chartEvents={this.chartEvents}
             options={{
-              pointSize: 2,
-              hAxis: {textPosition: "none" },
+              chartArea: {left: 100,top: 20,width:640,height: 40},
+              pointShape: "square",
+              pointSize: 20,
               legend: { position: "none" },
               titleTextStyle: { bold: false },
+              hAxis: {
+                gridlines: {color: 'transparent'},
+              },
+              vAxis: {gridlines: {color: 'transparent'}},
+  
             }}
           />
         </div>
-        <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
-          <p style={{ fontSize: "80%", fontWeight: "bold" }}>{throughputHeader}</p>
-        </div>
-        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
-          <Chart
-            width={850}
-            height={180}
-            chartType="LineChart"
-            data={this.getTxRateData()}
-            chartEvents={this.chartEvents}
-            options={{
-              pointSize: 2,
-              hAxis: {textPosition: "none" },
-              vAxis: { title: "up", titleTextStyle: {bold: true} },
-              legend: { position: "none" },
-              titleTextStyle: { bold: false },
-            }}
-          />
-        </div>
-        <div style={{ marginLeft: 0, marginTop: -30, marginBottom:  0 }}>
-          <Chart
-            width={850}
-            height={180}
-            chartType="LineChart"
-            data={this.getRxRateData()}
-            chartEvents={this.chartEvents}
-            options={{
-              pointSize: 2,
-              hAxis: {textPosition: "none" },
-              vAxis: { title: "down", direction: -1, titleTextStyle: {bold: true} },
-              legend: { position: "none" },
-              titleTextStyle: { bold: false },
-            }}
-          />
-        </div>
-        <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
-          <p style={{ fontSize: "80%", fontWeight: "bold" }}>{throughputHeaderPri}</p>
-        </div>
-        <div style={{ marginLeft: 0, marginTop: -16, marginBottom: 0 }}>
-          <Chart
-            width={850}
-            height={180}
-            chartType="LineChart"
-            data={this.getTxRatePriData()}
-            chartEvents={this.chartEvents}
-            options={{
-              pointSize: 2,
-              hAxis: {textPosition: "none" },
-              vAxis: { title: "up", titleTextStyle: {bold: true} },
-              legend: { position: "none" },
-              titleTextStyle: { bold: false },
-            }}
-          />
-        </div>
-        <div style={{ marginLeft: 0, marginTop: -30, marginBottom: 0 }}>
-          <Chart
-            width={850}
-            height={180}
-            chartType="LineChart"
-            data={this.getRxRatePriData()}
-            chartEvents={this.chartEvents}
-            options={{
-              pointSize: 2,
-              vAxis: { title: "down", direction: -1, titleTextStyle: {bold: true} },
-              legend: { position: "none" },
-              titleTextStyle: { bold: false },
-            }}
-          />
-        </div>
-        <div style={{ marginLeft: 0, marginTop: 10 }}>
+        <div style={{ marginLeft: 0, marginTop: 20, marginBottom: 40 }}>
           <table>
             <tbody>
               <tr>
@@ -713,7 +775,7 @@ class PingPlotWindow extends React.Component {
                         variant="contained"
                         size="small"
                         disabled={this.getDisabledLeftButton()}
-                        style={{ marginLeft: 90 }}
+                        style={{ marginLeft: 84 }}
                         /*                       style={{
                         width: "130px",
                         color: "#0000b0",
@@ -762,7 +824,7 @@ class PingPlotWindow extends React.Component {
                         variant="contained"
                         size="small"
                         disabled={this.getDisabledRightDroppedButton()}
-                        style={{ marginLeft: 90, color: "#dc3545" }}
+                        style={{ marginLeft: 64, color: "#dc3545" }}
                         /*                       style={{
                         width: "130px",
                         color: "#0000b0",
@@ -827,7 +889,7 @@ class PingPlotWindow extends React.Component {
                         variant="contained"
                         size="small"
                         disabled={this.getDisabledZoomOutButton()}
-                        style={{ marginTop: 10, marginLeft: 90 }}
+                        style={{ marginTop: 10, marginLeft: 84 }}
                         /*                       style={{
                         width: "130px",
                         color: "#0000b0",
@@ -864,6 +926,138 @@ class PingPlotWindow extends React.Component {
               </tr>
             </tbody>
           </table>
+        </div>
+        <div style={{ marginLeft: 20, marginTop: -20, textAlign: "left" }}>
+          <p style={{ fontSize: "80%", fontWeight: "bold" }}>{pingHeader}</p>
+        </div>
+        {/*         <div style={{ display: "flex", maxWidth: 800 }}> */}
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
+          <Chart
+            width={850}
+            height={140}
+            chartType="LineChart"
+            data={this.getPingData()}
+            chartEvents={this.chartEvents}
+            options={{
+              chartArea: {left: 86,top: 20,width:650,height: 100},
+              pointSize: 2,
+              hAxis: { textPosition: "none" },
+              legend: { position: "none" },
+              titleTextStyle: { bold: false },
+            }}
+          />
+        </div>
+        <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
+          <p style={{ fontSize: "80%", fontWeight: "bold" }}>{throughputHeader}</p>
+        </div>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
+          <Chart
+            width={850}
+            height={140}
+            chartType="LineChart"
+            data={this.getTxRateData()}
+            chartEvents={this.chartEvents}
+            options={{
+              chartArea: {left: 90,top: 20,width:650,height: 100},
+              pointSize: 2,
+              hAxis: { textPosition: "none" },
+              vAxis: { title: "up", titleTextStyle: {bold: true} },
+              legend: { position: "none" },
+              titleTextStyle: { bold: false },
+            }}
+          />
+        </div>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom:  0 }}>
+          <Chart
+            width={850}
+            height={140}
+            chartType="LineChart"
+            data={this.getRxRateData()}
+            chartEvents={this.chartEvents}
+            options={{
+              chartArea: {left: 90,top: 20,width:650,height: 100},
+              pointSize: 2,
+              hAxis: { textPosition: "none" },
+              vAxis: { title: "down", direction: -1, titleTextStyle: {bold: true} },
+              legend: { position: "none" },
+              titleTextStyle: { bold: false },
+            }}
+          />
+        </div>
+        <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
+          <p style={{ fontSize: "80%", fontWeight: "bold" }}>{throughputHeaderPri}</p>
+        </div>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
+          <Chart
+            width={850}
+            height={140}
+            chartType="LineChart"
+            data={this.getTxRatePriData()}
+            chartEvents={this.chartEvents}
+            options={{
+              chartArea: {left: 90,top: 20,width:650,height: 100},
+              pointSize: 2,
+              hAxis: { textPosition: "none" },
+              vAxis: { title: "up", titleTextStyle: {bold: true} },
+              legend: { position: "none" },
+              titleTextStyle: { bold: false },
+            }}
+          />
+        </div>
+        <div style={{ marginLeft: 0, marginTop: -16, marginBottom: 0 }}>
+          <Chart
+            width={850}
+            height={140}
+            chartType="LineChart"
+            data={this.getRxRatePriData()}
+            chartEvents={this.chartEvents}
+            options={{
+              chartArea: {left: 90,top: 20,width:650,height: 100},
+              pointSize: 2,
+              hAxis: { textPosition: "none" },
+              vAxis: { title: "down", direction: -1, titleTextStyle: {bold: true} },
+              legend: { position: "none" },
+              titleTextStyle: { bold: false },
+            }}
+          />
+        </div>
+        <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
+          <p style={{ fontSize: "80%", fontWeight: "bold" }}>{cpuUtlzHeader}</p>
+        </div>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
+          <Chart
+            width={850}
+            height={140}
+            chartType="LineChart"
+            data={this.getCpuUtlzData()}
+            chartEvents={this.chartEvents}
+            options={{
+              chartArea: {left: 90,top: 20,width:650,height: 100},
+              pointSize: 2,
+              hAxis: { textPosition: "none" },
+              legend: { position: "none" },
+              titleTextStyle: { bold: false },
+            }}
+          />
+        </div>
+        <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
+          <p style={{ fontSize: "80%", fontWeight: "bold" }}>{cpuTempHeader}</p>
+        </div>
+        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
+          <Chart
+            width={850}
+            height={140}
+            chartType="LineChart"
+            data={this.getCpuTempData()}
+            chartEvents={this.chartEvents}
+            options={{
+              chartArea: {left: 90,top: 20,width:650,height: 100},
+              pointSize: 2,
+              hAxis: { textPosition: "none" },
+              legend: { position: "none" },
+              titleTextStyle: { bold: false },
+            }}
+          />
         </div>
       </div>
     );
