@@ -388,13 +388,21 @@ class PingPlotWindow extends React.Component {
 
       const date = new Date(jod["timeStamp"]);
       const dropped = jod["dropped"];
+      const saved = jod["saved"];
 
       // timeline
       const timeLineStatus = 1;
-      const tlStatusStyle = dropped ? "point { size: 10; fill-color: #a52714; shape-type: square;  }" 
-                                    : "point { size: 10; fill-color: #109618; shape-type: square;  }" 
-      //const tlStatusStyle = "point { sfill-color: #a52714; }";
-      //const tlStatusStyle = null;
+      let tlStatusStyle = null;
+      if (dropped) {
+        // red
+        tlStatusStyle = "point { size: 10; fill-color: #a52714; shape-type: square;  }";
+      } else if (saved) {
+        // blue
+        tlStatusStyle = "point { size: 10; fill-color: #3366cc; shape-type: square;  }";
+      } else {
+        // green
+        tlStatusStyle = "point { size: 10; fill-color: #109618; shape-type: square;  }";
+      }
       const tlTooltipStyle = date.toLocaleString() + ", ok";
 
       this.timeLineArray.push([
