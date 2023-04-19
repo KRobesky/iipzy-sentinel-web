@@ -183,8 +183,8 @@ class PingPlotWindow extends React.Component {
     this.numEntries = 0;
     this.oldest = false;
     this.newest = true;
-    this.droppedLeft = false;
-    this.droppedRight = false;
+    this.markedLeft = false;
+    this.markedRight = false;
 
     this.id = 0;
     this.linkId = 0;
@@ -291,9 +291,9 @@ class PingPlotWindow extends React.Component {
     );
   }
 
-  getDisabledLeftDroppedButton() {
+  getDisabledLeftMarkedButton() {
     return (
-      !this.droppedLeft ||
+      !this.markedLeft ||
       this.zoomLevel === ZOOMLEVEL_MAX ||
       this.allButtonsDisabled
     );
@@ -305,9 +305,9 @@ class PingPlotWindow extends React.Component {
     );
   }
 
-  getDisabledRightDroppedButton() {
+  getDisabledRightMarkedButton() {
     return (
-      !this.droppedRight ||
+      !this.markedRight ||
       this.zoomLevel === ZOOMLEVEL_MAX ||
       this.allButtonsDisabled
     );
@@ -346,8 +346,8 @@ class PingPlotWindow extends React.Component {
     this.numEntries = jo.numEntries;
     this.oldest = jo.oldest;
     this.newest = jo.newest;
-    this.droppedLeft = jo.droppedLeft;
-    this.droppedRight = jo.droppedRight;
+    this.markedLeft = jo.markedLeft;
+    this.markedRight = jo.markedRight;
     const ja = jo.entries;
 
     console.log(
@@ -359,10 +359,10 @@ class PingPlotWindow extends React.Component {
         this.oldest +
         ", newest=" +
         this.newest +
-        ", droppedLeft =" +
-        this.droppedLeft +
-        ", droppedRight=" +
-        this.droppedRight +
+        ", markedLeft =" +
+        this.markedLeft +
+        ", markedRight=" +
+        this.markedRight +
         ", addEntries=" +
         ja.length
     );
@@ -387,17 +387,16 @@ class PingPlotWindow extends React.Component {
       const jod = joe.data;
 
       const date = new Date(jod["timeStamp"]);
-      const dropped = jod["dropped"];
-      const saved = jod["saved"];
+      const mark = jod["mark"];
 
       // timeline
       let tlStatusStyle = null;
       let tlTooltipStyle = null;
-      if (dropped) {
+      if (mark & Defs.pingMarkDropped) {
         // red
         tlStatusStyle = "point { size: 10; fill-color: #a52714; shape-type: square;  }";
         tlTooltipStyle = date.toLocaleString() + ", dropped";
-      } else if (saved) {
+      } else if (mark & Defs.pingMarkSaved) {
         // blue
         tlStatusStyle = "point { size: 10; fill-color: #3366cc; shape-type: square;  }";
         tlTooltipStyle = date.toLocaleString() + ", saved";
@@ -420,7 +419,7 @@ class PingPlotWindow extends React.Component {
       //const dropped = jod["dropped"];
       let droppedStyle = null;
       let tooltipStyle = null;
-      if (dropped) {
+      if (mark & Defs.pingMarkDropped) {
         millis = this.prevTimeMillis;
         droppedStyle = "point { size: 4; fill-color: #a52714; }";
         tooltipStyle = date.toLocaleString() + ", dropped packet";
@@ -429,7 +428,7 @@ class PingPlotWindow extends React.Component {
         tooltipStyle = date.toLocaleString() + ", " + millis + " ms";
       }
 
-      const idLinkIdStyle = JSON.stringify({ id, linkId, dropped });
+      const idLinkIdStyle = JSON.stringify({ id, linkId, mark });
       // console.log("...idLinkIdStyle = " + idLinkIdStyle);
       //console.log("handlePingPlotData: entry[" + i + "], date =" + date);
 
@@ -531,12 +530,12 @@ class PingPlotWindow extends React.Component {
     );
   }
 
-  handleLeftDroppedClick(ev) {
+  handleLeftMarkedClick(ev) {
     console.log("handleLeftClick");
     this.allButtonsDisabled = true;
     this.doRender();
     toSentinel.send(
-      Defs.ipcPingPlotWindowButtonLeftDroppedEx,
+      Defs.ipcPingPlotWindowButtonLeftMarkedEx,
       this.zoomArray[this.zoomLevel]
     );
   }
@@ -551,12 +550,12 @@ class PingPlotWindow extends React.Component {
     );
   }
 
-  handleRightDroppedClick(ev) {
+  handleRightMarkedClick(ev) {
     console.log("handleRightClick");
     this.allButtonsDisabled = true;
     this.doRender();
     toSentinel.send(
-      Defs.ipcPingPlotWindowButtonRightDroppedEx,
+      Defs.ipcPingPlotWindowButtonRightMarkedEx,
       this.zoomArray[this.zoomLevel]
     );
   }
@@ -799,20 +798,20 @@ class PingPlotWindow extends React.Component {
                   </Tooltip>
                 </td>
                 <td>
-                  <Tooltip title="find previous dropped packet">
+                  <Tooltip title="find previous dropped or saved sample">
                     <div>
                       <Button
                         type="button"
                         variant="contained"
                         size="small"
-                        disabled={this.getDisabledLeftDroppedButton()}
+                        disabled={this.getDisabledLeftMarkedButton()}
                         style={{ marginLeft: 5, color: "#dc3545" }}
                         /*                       style={{
                         width: "130px",
                         color: "#0000b0",
                         visibility: this.getButtonVisibility()
                       }} */
-                        onClick={(ev) => this.handleLeftDroppedClick(ev)}
+                        onClick={(ev) => this.handleLeftMarkedClick(ev)}
                       >
                         &lt;
                       </Button>
@@ -827,20 +826,20 @@ class PingPlotWindow extends React.Component {
                   </div>
                 </td>
                 <td>
-                  <Tooltip title="find next dropped packet">
+                  <Tooltip title="find next dropped or saved sample">
                     <div>
                       <Button
                         type="button"
                         variant="contained"
                         size="small"
-                        disabled={this.getDisabledRightDroppedButton()}
+                        disabled={this.getDisabledRightMarkedButton()}
                         style={{ marginLeft: 64, color: "#dc3545" }}
                         /*                       style={{
                         width: "130px",
                         color: "#0000b0",
                         visibility: this.getButtonVisibility()
                       }} */
-                        onClick={(ev) => this.handleRightDroppedClick(ev)}
+                        onClick={(ev) => this.handleRightMarkedClick(ev)}
                       >
                         &gt;
                       </Button>
