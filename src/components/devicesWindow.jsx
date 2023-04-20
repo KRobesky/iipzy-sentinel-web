@@ -1,6 +1,7 @@
 import React from "react";
 
 import Defs from "iipzy-shared/src/defs";
+import { get_is_debugging } from "iipzy-shared/src/utils/globals";
 
 import eventManager from "../ipc/eventManager";
 import devices from "../services/devices";
@@ -200,7 +201,7 @@ const handleDeviceUpdated = (event, data) => {
 
   if (!data.__hadError__) {
     // update devices.
-    console.log(
+    if (get_is_debugging()) console.log(
       "DevicesWindow - handleDeviceUpdated data = " +
         JSON.stringify(data, null, 2)
     );

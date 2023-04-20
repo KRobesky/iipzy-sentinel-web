@@ -4,6 +4,7 @@ import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 
 import Defs from "iipzy-shared/src/defs";
+import { get_is_debugging } from "iipzy-shared/src/utils/globals";
 
 import eventManager from "../ipc/eventManager";
 import toSentinel from "../ipc/toSentinel";
@@ -338,7 +339,7 @@ class PingPlotWindow extends React.Component {
       this.selectedRow--;
     }
 
-    console.log("...handlePingPlotData: " + JSON.stringify(jo, null, 2));
+    if (get_is_debugging()) console.log("...handlePingPlotData: " + JSON.stringify(jo, null, 2));
 
     this.allButtonsDisabled = false;
 
@@ -430,7 +431,7 @@ class PingPlotWindow extends React.Component {
 
       const idLinkIdStyle = JSON.stringify({ id, linkId, mark });
       // console.log("...idLinkIdStyle = " + idLinkIdStyle);
-      //console.log("handlePingPlotData: entry[" + i + "], date =" + date);
+      // console.log("handlePingPlotData: entry[" + i + "], date =" + date);
 
       this.pingArray.push([
         date,
@@ -445,7 +446,7 @@ class PingPlotWindow extends React.Component {
       const tx_rate_bits = jod["tx_rate_bits"];
       const rx_rate_pri_bits = jod["rx_rate_dns_bits"] + jod["rx_rate_rt_bits"];
       const tx_rate_pri_bits = jod["tx_rate_dns_bits"] + jod["tx_rate_rt_bits"];
-      //console.log("+++rx_rate_bits=" + rx_rate_bits + ", tx_rate_bits=" + tx_rate_bits);
+      // console.log("+++rx_rate_bits=" + rx_rate_bits + ", tx_rate_bits=" + tx_rate_bits);
 
       let rx_mbits = this.round(rx_rate_bits / 1000000, 2);
       //rx_mbits = Math.round(rx_mbits);
@@ -531,7 +532,7 @@ class PingPlotWindow extends React.Component {
   }
 
   handleLeftMarkedClick(ev) {
-    console.log("handleLeftClick");
+    console.log("handleLeftMarkedClick");
     this.allButtonsDisabled = true;
     this.doRender();
     toSentinel.send(
@@ -551,7 +552,7 @@ class PingPlotWindow extends React.Component {
   }
 
   handleRightMarkedClick(ev) {
-    console.log("handleRightClick");
+    console.log("handleRightMarkedClick");
     this.allButtonsDisabled = true;
     this.doRender();
     toSentinel.send(

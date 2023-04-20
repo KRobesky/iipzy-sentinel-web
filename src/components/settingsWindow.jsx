@@ -4,6 +4,7 @@ import { FilePicker } from "react-file-picker";
 import FormData from "form-data";
 
 //import Defs from "iipzy-shared/src/defs";
+import { get_is_debugging, set_is_debugging } from "iipzy-shared/src/utils/globals";
 
 import http from "../ipc/httpService";
 import settings from "../services/settings";
@@ -61,6 +62,10 @@ class SettingsWindow extends React.Component {
 
   getLogLevelDetailedChecked() {
     return SettingsWindow.settings.logLevel === "verbose";
+  }
+  
+  getConsoleLogLevelDetailedChecked() {
+    return get_is_debugging();
   }
 
   getSimulateDroppedPacketsChecked() {
@@ -148,6 +153,15 @@ class SettingsWindow extends React.Component {
     SettingsWindow.inProgress = true;
     this.doRender();
     setSettings("logLevel", SettingsWindow.settings.logLevel);
+  }
+
+  handleConsoleLogLevelDetailedClick(ev) {
+    console.log(
+      "SettingsWindow.handleConsoleLogLevelDetailedClick: " + ev.target.checked
+    );
+    set_is_debugging(ev.target.checked);
+    //SettingsWindow.inProgress = true;
+    this.doRender();
   }
 
   handleRebootClick(ev) {
@@ -435,6 +449,18 @@ class SettingsWindow extends React.Component {
                           }
                         />
                         &nbsp;Log Level Detailed&nbsp;&nbsp;
+                      </tr>
+                      <tr>
+                        <input
+                          type="checkbox"
+                          name="action-console-log-level-detailed"
+                          checked={this.getConsoleLogLevelDetailedChecked()}
+                          disabled={disabledWhileUpdating}
+                          onChange={(ev) =>
+                            this.handleConsoleLogLevelDetailedClick(ev)
+                          }
+                        />
+                        &nbsp;Console Log Detailed&nbsp;&nbsp;
                       </tr>
                       <tr>
                         <input
