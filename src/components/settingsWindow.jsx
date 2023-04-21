@@ -170,6 +170,13 @@ class SettingsWindow extends React.Component {
     this.doRender();
     setSettings("rebootAppliance", true);
   }
+  
+  handleShutdownClick(ev) {
+    console.log("SettingsWindow handleShutdownClick");
+    SettingsWindow.inProgress = true;
+    this.doRender();
+    setSettings("shutdownAppliance", true);
+  }
 
   handleSendLogsClick(ev) {
     console.log("SettingsWindow handleSendLogsClick");
@@ -554,6 +561,21 @@ class SettingsWindow extends React.Component {
                           onClick={(ev) => this.handleRebootClick(ev)}
                         >
                           Reboot
+                        </Button>
+                      </tr>
+                      <tr>&nbsp;</tr>
+                      <tr>
+                        <Button
+                          type="button"
+                          variant="contained"
+                          disabled={disabledWhileUpdating}
+                          style={{
+                            width: "130px",
+                            color: "#0000b0",
+                          }}
+                          onClick={(ev) => this.handleShutdownClick(ev)}
+                        >
+                          Shutdown
                         </Button>
                       </tr>
                       <tr>&nbsp;</tr>
