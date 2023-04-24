@@ -59,12 +59,14 @@ try{
   console.log("(Exception: " + ex);
 }
 
-const sentinelIPAddress =
+const sentinelIPAddress = "localhost:" + Defs.port_sentinel_core;
+/*
   window.location.hostname === "localhost"
     ? "192.168.1.145:" + Defs.port_sentinel_core
     : window.location.hostname + ":" + Defs.port_sentinel_core;
     //: "localhost:" + Defs.port_sentinel_core;
 console.log("sentinelIPAddress = " + sentinelIPAddress);
+*/
 
 localIPAddress.getLocalSubnet();
 
