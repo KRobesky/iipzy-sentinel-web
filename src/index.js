@@ -48,11 +48,18 @@ import eventManager from "./ipc/eventManager";
 console.log("window--------");
 console.log(window);
 
+console.log("iipzy-sentinel-web: args");
+{
+  for (let i = 0; i < process.argv.length; i++) {
+    console.log("  " + process.argv[i]);
+  }
+}
+
 const sentinelIPAddress =
   window.location.hostname === "localhost"
     ? "192.168.1.145:" + Defs.port_sentinel_core
-    //: window.location.hostname + ":8002";
-    : "localhost:" + Defs.port_sentinel_core;
+    : window.location.hostname + ":" + Defs.port_sentinel_core;
+    //: "localhost:" + Defs.port_sentinel_core;
 console.log("sentinelIPAddress = " + sentinelIPAddress);
 
 localIPAddress.getLocalSubnet();
