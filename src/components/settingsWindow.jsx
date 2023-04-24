@@ -596,7 +596,7 @@ class SettingsWindow extends React.Component {
                                     color: "#0000b0",
                                   }}
                                   href={
-                                    "http://" +
+                                    "https://" +
                                     sentinelIPAddress +
                                     "/api/settings/downloadpingchartdata"
                                   }
@@ -665,7 +665,7 @@ class SettingsWindow extends React.Component {
                                     color: "#0000b0",
                                   }}
                                   href={
-                                    "http://" +
+                                    "https://" +
                                     sentinelIPAddress +
                                     "/api/settings/downloadspeedtestdata"
                                   }
