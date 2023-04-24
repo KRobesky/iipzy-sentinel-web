@@ -1,5 +1,5 @@
 import axios from "axios";
-import http from "https";
+import https from "https";
 
 import Defs from "iipzy-shared/src/defs";
 
