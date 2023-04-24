@@ -17,7 +17,7 @@ async function send() {
     if (passwordEncrypted) {
       log("sendToSentinel - sending", "cred", "verbose");
       //const { status } =
-      await http.post("http://" + sentinelIPAddress + "/api/credentials", {
+      await http.post("https://" + sentinelIPAddress + "/api/credentials", {
         userName,
         passwordEncrypted
       });

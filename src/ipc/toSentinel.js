@@ -15,7 +15,7 @@ function init(sentinelIPAddress_) {
 
 async function send(channel, data) {
   console.log("toSentinel.send: channel=" + channel + ", data = " + data);
-  await http.post("http://" + sentinelIPAddress + "/api/request", {
+  await http.post("https://" + sentinelIPAddress + "/api/request", {
     event: channel,
     data
   });

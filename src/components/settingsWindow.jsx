@@ -885,7 +885,7 @@ async function sendRequest(method, file) {
   const form = new FormData();
   form.append("file", file, file.name);
   return await http.post(
-    "http://" + SettingsWindow.sentinelIPAddress + "/api/settings/" + method,
+    "https://" + SettingsWindow.sentinelIPAddress + "/api/settings/" + method,
     form
   );
 }

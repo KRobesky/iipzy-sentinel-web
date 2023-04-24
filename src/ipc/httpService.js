@@ -4,7 +4,7 @@ import http from "https";
 import Defs from "iipzy-shared/src/defs";
 
 const httpInstance = axios.create({
-  httpAgent: new http.Agent({
+  httpAgent: new https.Agent({
     keepAlive: true
   }),
   validateStatus: function(status) {
