@@ -50,8 +50,9 @@ console.log(window);
 
 const sentinelIPAddress =
   window.location.hostname === "localhost"
-    ? "192.168.1.145:8002"
-    : window.location.hostname + ":8002";
+    ? "192.168.1.145:" + Defs.port_sentinel_core
+    //: window.location.hostname + ":8002";
+    : "localhost:" + Defs.port_sentinel_core;
 console.log("sentinelIPAddress = " + sentinelIPAddress);
 
 localIPAddress.getLocalSubnet();
