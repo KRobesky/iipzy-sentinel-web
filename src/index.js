@@ -46,18 +46,7 @@ import settings from "./services/settings";
 import eventManager from "./ipc/eventManager";
 
 console.log("window--------");
-//console.log(window);
-
-console.log("iipzy-sentinel-web: args");
-try{
-  {
-    for (let i = 0; i < process.argv.length; i++) {
-      console.log("  " + process.argv[i]);
-    }
-  }
-} catch (ex) {
-  console.log("(Exception: " + ex);
-}
+console.log(window);
 
 const sentinelIPAddress =
   window.location.hostname === "localhost"
