@@ -2,7 +2,7 @@
 Description=iipzy-sentinel-web-server 
 
 [Service]
-ExecStart=/root/.nvm/versions/node/v12.10.0/bin/node /root/.nvm/versions/node/v12.10.0/bin/serve -s /root/iipzy-service/iipzy-sentinel-web/build -l 8443 --ssl-cert /etc/pki/tls/certs/iipzy.net.crt --ssl-key /etc/pki/tls/certs/iipzy.net.key -server
+ExecStart=/root/.nvm/versions/node/v12.10.0/bin/node /root/.nvm/versions/node/v12.10.0/bin/serve -s /root/iipzy-service/iipzy-sentinel-web/build -l 8443 --ssl-cert /etc/pki/tls/certs/iipzy.net.crt --ssl-key /etc/pki/tls/certs/iipzy.net.key
 # Required on some systems
 WorkingDirectory=/root/iipzy-service/iipzy-server-web-server
 Restart=always
