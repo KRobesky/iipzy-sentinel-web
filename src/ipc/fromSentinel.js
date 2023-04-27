@@ -29,6 +29,7 @@ class FromSentinel {
     this.loginStatus = null;
 
     //fromSentinel = this;
+    this.ready = false;
   }
 
   send(event, data) {
@@ -108,6 +109,9 @@ class FromSentinel {
         // continue.
         continue;
       }
+
+      this.ready = true;
+
       const { event, data: _data, forMain, loginStatus } = data;
       console.log(
         "fromSentinel.run: AFTER calling eventWait: event = " +
@@ -140,7 +144,13 @@ class FromSentinel {
     }
     console.log("<<<fromSentinel.run");
   }
+  
+  getIsReady() {
+    return this.ready;
+  }
 }
+
+
 
 // FromSentinel.sentinelIPAddress = "sentinel address not set";
 

@@ -102,7 +102,8 @@ if (paramsURI) {
 const fromSentinel = new FromSentinel(sentinelIPAddress);
 fromSentinel.run();
 
-await sleep(1000);
+while (!fromSentinel.getIsReady())
+  await sleep(1000);
 
 auth.init(sentinelIPAddress);
 credentials.init(sentinelIPAddress);
