@@ -99,6 +99,7 @@ if (paramsURI) {
   }
 }
 
+/*
 toSentinel.init(sentinelIPAddress);
 
 const fromSentinel = new FromSentinel(sentinelIPAddress);
@@ -106,18 +107,20 @@ fromSentinel.run();
 
 while (!fromSentinel.getIsReady())
   await sleep(1000);
+*/
 
 auth.init(sentinelIPAddress);
 credentials.init(sentinelIPAddress);
 devices.init(sentinelIPAddress);
 sentinelInfo.init(sentinelIPAddress);
 settings.init(sentinelIPAddress);
-//??toSentinel.init(sentinelIPAddress);
+toSentinel.init(sentinelIPAddress);
 
-/*
 const fromSentinel = new FromSentinel(sentinelIPAddress);
 fromSentinel.run();
-*/
+
+while (!fromSentinel.getIsReady())
+  await sleep(1000);
 
 ReactDOM.render(
   <BrowserRouter>
