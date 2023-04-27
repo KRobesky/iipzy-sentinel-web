@@ -29,7 +29,6 @@ class FromSentinel {
     this.loginStatus = null;
 
     //fromSentinel = this;
-    this.ready = false;
   }
 
   send(event, data) {
@@ -109,7 +108,6 @@ class FromSentinel {
         // continue.
         continue;
       }
-
       const { event, data: _data, forMain, loginStatus } = data;
       console.log(
         "fromSentinel.run: AFTER calling eventWait: event = " +
@@ -126,7 +124,6 @@ class FromSentinel {
         const { connToken } = _data;
         console.log("fromSentinel.run: new connection token  = " + connToken);
         http.setConnTokenHeader(connToken);
-        this.ready = true;
       }
 
       try {
@@ -143,14 +140,7 @@ class FromSentinel {
     }
     console.log("<<<fromSentinel.run");
   }
-
-  getIsReady() {
-    console.log("getIsReady = " + this.ready);
-    return this.ready;
-  }
 }
-
-
 
 // FromSentinel.sentinelIPAddress = "sentinel address not set";
 

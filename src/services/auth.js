@@ -17,7 +17,7 @@ async function init() {
 async function sendVerify(credentials) {
   log("sendVerify", "auth", "info");
   return await http.post(
-    "http://" + serverIPAddress + "/api/auth/verify",
+    "https://" + serverIPAddress + "/api/auth/verify",
     credentials
   );
 }

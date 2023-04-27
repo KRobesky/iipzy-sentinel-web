@@ -44,21 +44,17 @@ import devices from "./services/devices";
 import settings from "./services/settings";
 
 import eventManager from "./ipc/eventManager";
-import { sleep } from "iipzy-shared/src/utils/utils";
 
 console.log("window--------");
 console.log(window);
 
 const sentinelIPAddress =
   window.location.hostname === "localhost"
-    ? "192.168.1.145:" + Defs.port_sentinel_core
-    : window.location.hostname + ":" + Defs.port_sentinel_core;
-    //: "localhost:" + Defs.port_sentinel_core;
+    ? "192.168.1.145:8002"
+    : window.location.hostname + ":8002";
 console.log("sentinelIPAddress = " + sentinelIPAddress);
 
 localIPAddress.getLocalSubnet();
-
-async function main() {
 
 /*
   Handling credentials.
@@ -99,16 +95,6 @@ if (paramsURI) {
   }
 }
 
-/*
-toSentinel.init(sentinelIPAddress);
-
-const fromSentinel = new FromSentinel(sentinelIPAddress);
-fromSentinel.run();
-
-while (!fromSentinel.getIsReady())
-  await sleep(1000);
-*/
-
 auth.init(sentinelIPAddress);
 credentials.init(sentinelIPAddress);
 devices.init(sentinelIPAddress);
@@ -118,9 +104,6 @@ toSentinel.init(sentinelIPAddress);
 
 const fromSentinel = new FromSentinel(sentinelIPAddress);
 fromSentinel.run();
-
-//while (!fromSentinel.getIsReady())
-//  await sleep(1000);
 
 ReactDOM.render(
   <BrowserRouter>
@@ -137,9 +120,6 @@ if (sendCredentials) credentials.send();
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: http://bit.ly/CRA-PWA
 serviceWorker.unregister();
-}
-
-main();
 
 // from: https://stackoverflow.com/questions/35352638/react-how-to-get-parameter-value-from-query-string
 function getQueryVariable(variable) {

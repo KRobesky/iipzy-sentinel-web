@@ -1,20 +1,8 @@
 import axios from "axios";
-//import https from "https";
 import http from "http";
 
 import Defs from "iipzy-shared/src/defs";
-/*
-const httpInstance = axios.create({
-  httpAgent: new https.Agent({
-    keepAlive: true
-  }),
-  validateStatus: function(status) {
-    // return success for all http response codes.
-    //console.log("-------validateStatus: status = " + status);
-    return true;
-  }
-});
-*/
+
 const httpInstance = axios.create({
   httpAgent: new http.Agent({
     keepAlive: true
