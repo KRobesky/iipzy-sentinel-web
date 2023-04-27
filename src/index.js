@@ -119,8 +119,8 @@ toSentinel.init(sentinelIPAddress);
 const fromSentinel = new FromSentinel(sentinelIPAddress);
 fromSentinel.run();
 
-while (!fromSentinel.getIsReady())
-  await sleep(1000);
+//while (!fromSentinel.getIsReady())
+//  await sleep(1000);
 
 ReactDOM.render(
   <BrowserRouter>
