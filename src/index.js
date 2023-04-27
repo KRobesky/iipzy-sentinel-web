@@ -99,6 +99,8 @@ if (paramsURI) {
   }
 }
 
+toSentinel.init(sentinelIPAddress);
+
 const fromSentinel = new FromSentinel(sentinelIPAddress);
 fromSentinel.run();
 
@@ -110,7 +112,7 @@ credentials.init(sentinelIPAddress);
 devices.init(sentinelIPAddress);
 sentinelInfo.init(sentinelIPAddress);
 settings.init(sentinelIPAddress);
-toSentinel.init(sentinelIPAddress);
+//??toSentinel.init(sentinelIPAddress);
 
 /*
 const fromSentinel = new FromSentinel(sentinelIPAddress);
