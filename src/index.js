@@ -44,6 +44,7 @@ import devices from "./services/devices";
 import settings from "./services/settings";
 
 import eventManager from "./ipc/eventManager";
+import { sleep } from "iipzy-shared/src/utils/utils";
 
 console.log("window--------");
 console.log(window);
@@ -56,6 +57,8 @@ const sentinelIPAddress =
 console.log("sentinelIPAddress = " + sentinelIPAddress);
 
 localIPAddress.getLocalSubnet();
+
+async function main() {
 
 /*
   Handling credentials.
@@ -96,6 +99,11 @@ if (paramsURI) {
   }
 }
 
+const fromSentinel = new FromSentinel(sentinelIPAddress);
+fromSentinel.run();
+
+await sleep(1000);
+
 auth.init(sentinelIPAddress);
 credentials.init(sentinelIPAddress);
 devices.init(sentinelIPAddress);
@@ -103,8 +111,10 @@ sentinelInfo.init(sentinelIPAddress);
 settings.init(sentinelIPAddress);
 toSentinel.init(sentinelIPAddress);
 
+/*
 const fromSentinel = new FromSentinel(sentinelIPAddress);
 fromSentinel.run();
+*/
 
 ReactDOM.render(
   <BrowserRouter>
@@ -121,6 +131,9 @@ if (sendCredentials) credentials.send();
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: http://bit.ly/CRA-PWA
 serviceWorker.unregister();
+}
+
+main();
 
 // from: https://stackoverflow.com/questions/35352638/react-how-to-get-parameter-value-from-query-string
 function getQueryVariable(variable) {
