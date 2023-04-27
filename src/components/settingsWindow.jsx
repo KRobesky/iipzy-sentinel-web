@@ -596,7 +596,7 @@ class SettingsWindow extends React.Component {
                                     color: "#0000b0",
                                   }}
                                   href={
-                                    "https://" +
+                                    "http://" +
                                     sentinelIPAddress +
                                     "/api/settings/downloadpingchartdata"
                                   }
@@ -665,7 +665,7 @@ class SettingsWindow extends React.Component {
                                     color: "#0000b0",
                                   }}
                                   href={
-                                    "https://" +
+                                    "http://" +
                                     sentinelIPAddress +
                                     "/api/settings/downloadspeedtestdata"
                                   }
@@ -885,7 +885,7 @@ async function sendRequest(method, file) {
   const form = new FormData();
   form.append("file", file, file.name);
   return await http.post(
-    "https://" + SettingsWindow.sentinelIPAddress + "/api/settings/" + method,
+    "http://" + SettingsWindow.sentinelIPAddress + "/api/settings/" + method,
     form
   );
 }

@@ -14,14 +14,14 @@ async function getDevices(queryString) {
   console.log("getDevices");
 
   return await http.get(
-    "https://" + sentinelIPAddress + "/api/devices" + queryString
+    "http://" + sentinelIPAddress + "/api/devices" + queryString
   );
 }
 
 async function putDevice(deviceChanges) {
   console.log("putDevice");
 
-  return await http.put("https://" + sentinelIPAddress + "/api/devices", {
+  return await http.put("http://" + sentinelIPAddress + "/api/devices", {
     deviceChanges
   });
 }

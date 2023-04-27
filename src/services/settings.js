@@ -12,7 +12,7 @@ function init(sentinelIPAddress_) {
 async function getServiceAddress() {
   console.log("settings.getServiceAddress");
   const { data, status } = await http.get(
-    "https://" + sentinelIPAddress + "/api/settings/serviceaddress"
+    "http://" + sentinelIPAddress + "/api/settings/serviceaddress"
   );
   if (status === Defs.httpStatusOk) return data.serviceAddress;
   return "address not set";
@@ -20,13 +20,13 @@ async function getServiceAddress() {
 
 async function getSettings() {
   console.log("settings.getSettings");
-  return await http.get("https://" + sentinelIPAddress + "/api/settings/");
+  return await http.get("http://" + sentinelIPAddress + "/api/settings/");
 }
 
 async function setSettings(settings) {
   console.log("settings.setSettings");
   return await http.post(
-    "https://" + sentinelIPAddress + "/api/settings/",
+    "http://" + sentinelIPAddress + "/api/settings/",
     settings
   );
 }

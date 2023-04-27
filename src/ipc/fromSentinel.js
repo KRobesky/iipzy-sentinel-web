@@ -72,7 +72,7 @@ class FromSentinel {
     while (this.running) {
       console.log("fromSentinel.run: calling eventWait");
       const { data, status } = await http.get(
-        "https://" + this.sentinelIPAddress + "/api/eventWait",
+        "http://" + this.sentinelIPAddress + "/api/eventWait",
         {
           timeout: 10000
         }
