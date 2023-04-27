@@ -144,8 +144,9 @@ class FromSentinel {
     }
     console.log("<<<fromSentinel.run");
   }
-  
+
   getIsReady() {
+    console.log("getIsReady = " + this.ready);
     return this.ready;
   }
 }
