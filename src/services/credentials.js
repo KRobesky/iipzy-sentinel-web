@@ -1,12 +1,15 @@
 import http from "../ipc/httpService";
 import cookie from "../utils/cookie";
 import { log } from "../utils/log";
+import sentinelInfo from "../utils/sentinelInfo";
 
 let sentinelIPAddress = "sentinel address not set";
+let sentinelProtocol = "sentinel protocol not set";
 
-function init(sentinelIPAddress_) {
-  console.log("credentials.init: sentinelIPAddress = " + sentinelIPAddress_);
-  sentinelIPAddress = sentinelIPAddress_;
+function init() {
+  console.log("credentials.init");
+  sentinelIPAddress = sentinelInfo.getSentinelIPAddress();
+  sentinelProtocol = sentinelInfo.getSentinelProtocol();
 }
 
 async function send() {
@@ -17,7 +20,7 @@ async function send() {
     if (passwordEncrypted) {
       log("sendToSentinel - sending", "cred", "verbose");
       //const { status } =
-      await http.post("http://" + sentinelIPAddress + "/api/credentials", {
+      await http.post(sentinelProtocol + sentinelIPAddress + "/api/credentials", {
         userName,
         passwordEncrypted
       });

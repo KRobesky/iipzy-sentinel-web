@@ -2,17 +2,21 @@ import Defs from "iipzy-shared/src/defs";
 
 import http from "../ipc/httpService";
 
-let sentinelIPAddress = "sentinel address not set";
+import sentinelInfo from "../utils/sentinelInfo";
 
-function init(sentinelIPAddress_) {
-  console.log("settings.init: sentinelIPAddress = " + sentinelIPAddress_);
-  sentinelIPAddress = sentinelIPAddress_;
+let sentinelIPAddress = "sentinel address not set";
+let sentinelProtocol = "sentinel protocol not set";
+
+function init() {
+  console.log("settings.init");
+  sentinelIPAddress = sentinelInfo.getSentinelIPAddress();
+  sentinelProtocol = sentinelInfo.getSentinelProtocol();
 }
 
 async function getServiceAddress() {
   console.log("settings.getServiceAddress");
   const { data, status } = await http.get(
-    "http://" + sentinelIPAddress + "/api/settings/serviceaddress"
+    sentinelProtocol + sentinelIPAddress + "/api/settings/serviceaddress"
   );
   if (status === Defs.httpStatusOk) return data.serviceAddress;
   return "address not set";
@@ -20,13 +24,13 @@ async function getServiceAddress() {
 
 async function getSettings() {
   console.log("settings.getSettings");
-  return await http.get("http://" + sentinelIPAddress + "/api/settings/");
+  return await http.get(sentinelProtocol + sentinelIPAddress + "/api/settings/");
 }
 
 async function setSettings(settings) {
   console.log("settings.setSettings");
   return await http.post(
-    "http://" + sentinelIPAddress + "/api/settings/",
+    sentinelProtocol + sentinelIPAddress + "/api/settings/",
     settings
   );
 }

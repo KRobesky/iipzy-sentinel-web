@@ -3,25 +3,29 @@
 //import eventManager from "../ipc/eventManager";
 import http from "../ipc/httpService";
 
-let sentinelIPAddress = "sentinel address not set";
+import sentinelInfo from "../utils/sentinelInfo";
 
-function init(sentinelIPAddress_) {
-  console.log("devices.init: sentinelIPAddress = " + sentinelIPAddress_);
-  sentinelIPAddress = sentinelIPAddress_;
+let sentinelIPAddress = "sentinel address not set";
+let sentinelProtocol = "sentinel protocol not set";
+
+function init() {
+  console.log("devices.init");
+  sentinelIPAddress = sentinelInfo.getSentinelIPAddress();
+  sentinelProtocol = sentinelInfo.getSentinelProtocol();
 }
 
 async function getDevices(queryString) {
   console.log("getDevices");
 
   return await http.get(
-    "http://" + sentinelIPAddress + "/api/devices" + queryString
+    sentinelProtocol + sentinelIPAddress + "/api/devices" + queryString
   );
 }
 
 async function putDevice(deviceChanges) {
   console.log("putDevice");
 
-  return await http.put("http://" + sentinelIPAddress + "/api/devices", {
+  return await http.put(sentinelProtocol + sentinelIPAddress + "/api/devices", {
     deviceChanges
   });
 }

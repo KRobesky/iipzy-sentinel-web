@@ -2,20 +2,24 @@
 
 import http from "./httpService";
 
-let sentinelIPAddress = "sentinel address not set";
+import sentinelInfo from "../utils/sentinelInfo";
 
-function init(sentinelIPAddress_) {
+let sentinelIPAddress = "sentinel address not set";
+let sentinelProtocol = "sentinel protocol not set";
+
+function init() {
   console.log(
-    "toSentinel.init: sentinelIPAddress = " + sentinelIPAddress_,
+    "toSentinel.init",
     "devs",
     "info"
   );
-  sentinelIPAddress = sentinelIPAddress_;
+  sentinelIPAddress = sentinelInfo.getSentinelIPAddress();
+  sentinelProtocol = sentinelInfo.getSentinelProtocol();
 }
 
 async function send(channel, data) {
   console.log("toSentinel.send: channel=" + channel + ", data = " + data);
-  await http.post("http://" + sentinelIPAddress + "/api/request", {
+  await http.post(sentinelProtocol + sentinelIPAddress + "/api/request", {
     event: channel,
     data
   });

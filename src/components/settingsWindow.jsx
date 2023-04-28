@@ -326,6 +326,7 @@ class SettingsWindow extends React.Component {
     const restoreSpeedTestDataReady =
       SettingsWindow.settings.speedTestDataRestore;
     const sentinelIPAddress = SettingsWindow.sentinelIPAddress;
+    const sentinelProtocol = SettingsWindow.sentinelProtocol;
     const showInfoPopup = SettingsWindow.showInfoPopup;
 
     const showSpinner = SettingsWindow.inProgress;
@@ -596,7 +597,7 @@ class SettingsWindow extends React.Component {
                                     color: "#0000b0",
                                   }}
                                   href={
-                                    "http://" +
+                                    sentinelProtocol +
                                     sentinelIPAddress +
                                     "/api/settings/downloadpingchartdata"
                                   }
@@ -665,7 +666,7 @@ class SettingsWindow extends React.Component {
                                     color: "#0000b0",
                                   }}
                                   href={
-                                    "http://" +
+                                    sentinelProtocol +
                                     sentinelIPAddress +
                                     "/api/settings/downloadspeedtestdata"
                                   }
@@ -829,6 +830,7 @@ class SettingsWindow extends React.Component {
 
 SettingsWindow.settings = {};
 SettingsWindow.sentinelIPAddress = "ip address not set";
+SettingsWindow.sentinelProtocol = "protocol not set";
 
 SettingsWindow.downloadSeconds = cookie.get("downloadSeconds", 10);
 SettingsWindow.nominalLatencySeconds = cookie.get("nominalLatencySeconds", 10);
@@ -845,6 +847,7 @@ async function getSettings() {
   const { data } = await settings.getSettings();
   SettingsWindow.settings = data.settings;
   SettingsWindow.sentinelIPAddress = sentinelInfo.getSentinelIPAddress();
+  SettingsWindow.sentinelProtocol = sentinelInfo.getSentinelProtocol();
   console.log(
     "SettingsWindow.getSettings: settings = " +
       JSON.stringify(SettingsWindow.settings, null, 2)
@@ -885,7 +888,7 @@ async function sendRequest(method, file) {
   const form = new FormData();
   form.append("file", file, file.name);
   return await http.post(
-    "http://" + SettingsWindow.sentinelIPAddress + "/api/settings/" + method,
+    SettingsWindow.sentinelProtocol + SettingsWindow.sentinelIPAddress + "/api/settings/" + method,
     form
   );
 }

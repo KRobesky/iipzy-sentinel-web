@@ -1,8 +1,40 @@
 import axios from "axios";
 import http from "http";
+import https from "https";
 
 import Defs from "iipzy-shared/src/defs";
 
+import sentinelInfo from "../utils/sentinelInfo";
+
+let httpInstance = null;
+
+function init() {
+  if (sentinelInfo.getSentinelProtocol().startsWith("https")) {
+    httpInstance = axios.create({
+      httpAgent: new https.Agent({
+        keepAlive: true
+      }),
+      validateStatus: function(status) {
+        // return success for all http response codes.
+        //console.log("-------validateStatus: status = " + status);
+        return true;
+      }
+    });
+  } else {
+    httpInstance = axios.create({
+      httpAgent: new http.Agent({
+        keepAlive: true
+      }),
+      validateStatus: function(status) {
+        // return success for all http response codes.
+        //console.log("-------validateStatus: status = " + status);
+        return true;
+      }
+    });
+  }
+}
+
+/*
 const httpInstance = axios.create({
   httpAgent: new http.Agent({
     keepAlive: true
@@ -13,6 +45,7 @@ const httpInstance = axios.create({
     return true;
   }
 });
+*/
 
 function handleHttpException(title, ex) {
   console.log("(Exception) " + title + ": " + ex + ", code = " + ex.code);
@@ -125,6 +158,7 @@ function addHeaders(config) {
 export default {
   delete: _delete,
   get: _get,
+  init,
   post: _post,
   put: _put,
   logAuthToken,

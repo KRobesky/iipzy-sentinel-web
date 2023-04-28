@@ -37,6 +37,7 @@ import sentinelInfo from "./utils/sentinelInfo";
 import localIPAddress from "./utils/localIPAddress";
 
 import FromSentinel from "./ipc/fromSentinel";
+import httpService from "./ipc/httpService";
 import toSentinel from "./ipc/toSentinel";
 import auth from "./services/auth";
 import credentials from "./services/credentials";
@@ -44,75 +45,92 @@ import devices from "./services/devices";
 import settings from "./services/settings";
 
 import eventManager from "./ipc/eventManager";
+import { sleep } from "iipzy-shared/src/utils/utils";
 
 console.log("window--------");
 console.log(window);
+//console.log("window.location.hostname--------");
+//console.log(window.location.hostname);
+//console.log("window.location.pathname--------");
+//console.log(window.location.pathname);
+console.log("window.location.protocol--------");
+console.log(window.location.protocol);
 
-const sentinelIPAddress =
-  window.location.hostname === "localhost"
-    ? "192.168.1.145:8002"
-    : window.location.hostname + ":8002";
-console.log("sentinelIPAddress = " + sentinelIPAddress);
+async function main() {
+  const sentinelIPAddress =
+    window.location.hostname === "localhost"
+      ? "192.168.1.145:8002"
+      : window.location.hostname + ":8002";
+  console.log("sentinelIPAddress = " + sentinelIPAddress);
 
-localIPAddress.getLocalSubnet();
+  localIPAddress.getLocalSubnet();
 
-/*
-  Handling credentials.
-  From iipzy-server-web (i.e., "params"):
-    Put userName, password into cookies.
-    Send creds to sentinel.
+  /*
+    Handling credentials.
+    From iipzy-server-web (i.e., "params"):
+      Put userName, password into cookies.
+      Send creds to sentinel.
 
-  From direct call (e.g., http://192.168.1.56:8008):
-    if no cookie, 
-      show LoginWindow (other windows are blocked).
-      on login:
-        Put userName, password into cookies.
-        Send creds to sentinel.
-        No escape on fail.
+    From direct call (e.g., http://192.168.1.56:8008):
+      if no cookie, 
+        show LoginWindow (other windows are blocked).
+        on login:
+          Put userName, password into cookies.
+          Send creds to sentinel.
+          No escape on fail.
 
-  Sentinel
-    if no or bad credentials, set needLogin in event return.
-    iipzy-sentinel-web does "no-cookie" dance (above).
+    Sentinel
+      if no or bad credentials, set needLogin in event return.
+      iipzy-sentinel-web does "no-cookie" dance (above).
 
-*/
+  */
 
-let sendCredentials = false;
-const paramsURI = getQueryVariable("params");
-if (paramsURI) {
-  const paramsEncrypted = decodeURI(paramsURI);
-  if (paramsEncrypted) {
-    const params = JSON.parse(cipher.decrypt(paramsEncrypted));
-    const { userName, password, from } = params;
+  let sendCredentials = false;
+  const paramsURI = getQueryVariable("params");
+  if (paramsURI) {
+    const paramsEncrypted = decodeURI(paramsURI);
+    if (paramsEncrypted) {
+      const params = JSON.parse(cipher.decrypt(paramsEncrypted));
+      const { userName, password, from } = params;
 
-    console.log("userName = " + userName);
-    console.log("passwordEncrypted = " + password);
-    console.log("from = " + from);
+      console.log("userName = " + userName);
+      console.log("passwordEncrypted = " + password);
+      console.log("from = " + from);
 
-    if (userName) cookie.set("userName", userName);
-    if (password) cookie.set("password", password);
-    if (from) cookie.set("fromOrigin", from);
-    sendCredentials = true;
+      if (userName) cookie.set("userName", userName);
+      if (password) cookie.set("password", password);
+      if (from) cookie.set("fromOrigin", from);
+      sendCredentials = true;
+    }
   }
+
+  sentinelInfo.init(sentinelIPAddress, window.location.protocol + "//");
+
+  httpService.init();
+  auth.init();
+  credentials.init();
+  devices.init();
+  settings.init();
+  toSentinel.init();
+
+  const fromSentinel = new FromSentinel();
+  fromSentinel.run();
+
+  while (!fromSentinel.is_ready()) {
+    await sleep(1000);
+  }
+
+  ReactDOM.render(
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>,
+    document.getElementById("root")
+  );
+
+  if (sendCredentials) credentials.send();
 }
 
-auth.init(sentinelIPAddress);
-credentials.init(sentinelIPAddress);
-devices.init(sentinelIPAddress);
-sentinelInfo.init(sentinelIPAddress);
-settings.init(sentinelIPAddress);
-toSentinel.init(sentinelIPAddress);
-
-const fromSentinel = new FromSentinel(sentinelIPAddress);
-fromSentinel.run();
-
-ReactDOM.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
-  document.getElementById("root")
-);
-
-if (sendCredentials) credentials.send();
+main();
 
 //if (true) eventManager.send(Defs.ipcLinkTo, Defs.urlLogin);
 

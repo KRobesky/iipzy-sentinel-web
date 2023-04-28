@@ -4,6 +4,8 @@ import { sleep } from "iipzy-shared/src/utils/utils";
 import eventManager from "./eventManager";
 import http from "./httpService";
 
+import sentinelInfo from "../utils/sentinelInfo";
+
 // receive an event from iipzy-sentinel and forword to renderer.
 //let fromSentinel = null;
 
@@ -15,18 +17,19 @@ import http from "./httpService";
 */
 
 class FromSentinel {
-  constructor(sentinelIPAddress) {
-    console.log(
-      "fromSentinel.constructor: sentinelIPAddress = " + sentinelIPAddress
-    );
+  constructor() {
+    console.log("fromSentinel.constructor");
 
-    this.sentinelIPAddress = sentinelIPAddress;
+    this.sentinelIPAddress = sentinelInfo.getSentinelIPAddress();
+    this.sentinelProtocol = sentinelInfo.getSentinelProtocol();
 
     this.sentinelStatus = Defs.sentinelStatusUnknown;
 
     this.running = true;
 
     this.loginStatus = null;
+
+    this.ready = false;
 
     //fromSentinel = this;
   }
@@ -71,7 +74,7 @@ class FromSentinel {
     while (this.running) {
       console.log("fromSentinel.run: calling eventWait");
       const { data, status } = await http.get(
-        "http://" + this.sentinelIPAddress + "/api/eventWait",
+        this.sentinelProtocol + this.sentinelIPAddress + "/api/eventWait",
         {
           timeout: 10000
         }
@@ -124,6 +127,7 @@ class FromSentinel {
         const { connToken } = _data;
         console.log("fromSentinel.run: new connection token  = " + connToken);
         http.setConnTokenHeader(connToken);
+        this.ready = true;
       }
 
       try {
@@ -139,6 +143,10 @@ class FromSentinel {
       }
     }
     console.log("<<<fromSentinel.run");
+  }
+
+  is_ready() {
+    return this.ready;
   }
 }
 
