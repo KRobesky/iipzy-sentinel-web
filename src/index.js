@@ -63,7 +63,7 @@ async function main() {
       : window.location.hostname + ":8002";
   console.log("sentinelIPAddress = " + sentinelIPAddress);
 
-  localIPAddress.getLocalSubnet();
+  //localIPAddress.getLocalSubnet();
 
   /*
     Handling credentials.
@@ -104,6 +104,8 @@ async function main() {
     }
   }
 
+  const clientToken = getQueryVariable("clientToken");
+
   sentinelInfo.init(sentinelIPAddress, window.location.protocol + "//");
 
   httpService.init();
@@ -113,7 +115,7 @@ async function main() {
   settings.init();
   toSentinel.init();
 
-  const fromSentinel = new FromSentinel();
+  const fromSentinel = new FromSentinel(clientToken);
   fromSentinel.run();
 
   while (!fromSentinel.is_ready()) {

@@ -8,7 +8,7 @@ import sentinelInfo from "../utils/sentinelInfo";
 
 let httpInstance = null;
 
-function init() {
+function init(clientToken) {
   if (sentinelInfo.getSentinelProtocol().startsWith("https")) {
     httpInstance = axios.create({
       httpAgent: new https.Agent({
@@ -31,6 +31,10 @@ function init() {
         return true;
       }
     });
+  }
+
+  if (clientToken) {
+    setClientTokenHeader(clientToken);
   }
 }
 

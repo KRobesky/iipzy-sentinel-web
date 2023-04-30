@@ -17,8 +17,10 @@ import sentinelInfo from "../utils/sentinelInfo";
 */
 
 class FromSentinel {
-  constructor() {
+  constructor(clientToken) {
     console.log("fromSentinel.constructor");
+
+    this.clientToken = clientToken;
 
     this.sentinelIPAddress = sentinelInfo.getSentinelIPAddress();
     this.sentinelProtocol = sentinelInfo.getSentinelProtocol();
@@ -126,9 +128,10 @@ class FromSentinel {
       if (event === Defs.ipcConnectionToken) {
         const { connToken } = _data;
         console.log("fromSentinel.run: new connection token  = " + connToken);
-        http.setConnTokenHeader(connToken);
-        this.ready = true;
+        http.setConnTokenHeader(connToken);  
       }
+
+      this.ready = true;
 
       try {
         this.sendSentinelStatus(Defs.sentinelStatusOnline);
