@@ -18,7 +18,7 @@ import sentinelInfo from "../utils/sentinelInfo";
 
 class FromSentinel {
   constructor(clientToken) {
-    console.log("fromSentinel.constructor");
+    console.log("fromSentinel.constructor: clientToken = " + clientToken);
 
     this.clientToken = clientToken;
 
@@ -72,6 +72,8 @@ class FromSentinel {
 
   async run() {
     console.log(">>>fromSentinel.run");
+
+    if (this.clientToken) http.setClientTokenHeader(this.clientToken);
 
     while (this.running) {
       console.log("fromSentinel.run: calling eventWait");
