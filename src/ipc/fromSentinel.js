@@ -73,7 +73,7 @@ class FromSentinel {
   async run() {
     console.log(">>>fromSentinel.run");
     
-    if (this.clientToken) http.setClientTokenHeader(this.clientToken);
+    //if (this.clientToken) http.setClientTokenHeader(this.clientToken);
 
     while (this.running) {
       console.log("fromSentinel.run: calling eventWait");
