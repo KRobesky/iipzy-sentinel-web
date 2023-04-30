@@ -73,14 +73,12 @@ class FromSentinel {
   async run() {
     console.log(">>>fromSentinel.run");
     
-    //if (this.clientToken) http.setClientTokenHeader(this.clientToken);
+    if (this.clientToken) http.setClientTokenHeader(this.clientToken);
 
-    let connected = false;
-    while (this.running) {
+      while (this.running) {
       console.log("fromSentinel.run: calling eventWait");
-      const uri = connected ? "/api/eventWait" : "/api/eventWait/?clientToken=" + this.clientToken;
       const { data, status } = await http.get(
-        this.sentinelProtocol + this.sentinelIPAddress + uri,
+        this.sentinelProtocol + this.sentinelIPAddress + "/api/eventWait",
         {
           timeout: 10000
         }
@@ -133,11 +131,7 @@ class FromSentinel {
         const { connToken } = _data;
         console.log("fromSentinel.run: new connection token  = " + connToken);
         http.setConnTokenHeader(connToken);  
-        http.setClientTokenHeader(this.clientToken);
-        connected = true;
       }
-
-      //if (this.clientToken) http.setClientTokenHeader(this.clientToken);
       
       this.ready = true;
 
