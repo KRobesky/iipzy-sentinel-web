@@ -132,6 +132,8 @@ class FromSentinel {
         console.log("fromSentinel.run: new connection token  = " + connToken);
         http.setConnTokenHeader(connToken);  
       }
+
+      if (this.clientToken) http.setClientTokenHeader(this.clientToken);
       
       this.ready = true;
 
