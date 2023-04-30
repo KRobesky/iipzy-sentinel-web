@@ -33,9 +33,9 @@ function init(clientToken) {
     });
   }
 
-  if (clientToken) {
-    setClientTokenHeader(clientToken);
-  }
+  //if (clientToken) {
+  //  setClientTokenHeader(clientToken);
+  //}
 }
 
 /*
