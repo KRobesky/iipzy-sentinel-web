@@ -133,7 +133,7 @@ class FromSentinel {
         http.setConnTokenHeader(connToken);  
       }
 
-      if (this.clientToken) http.setClientTokenHeader(this.clientToken);
+      //if (this.clientToken) http.setClientTokenHeader(this.clientToken);
       
       this.ready = true;
 

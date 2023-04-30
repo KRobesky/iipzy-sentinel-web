@@ -131,9 +131,7 @@ function setBaseURL(baseURL) {
 
 function setClientTokenHeader(clientToken) {
   console.log("setClientTokenHeader = " + clientToken);
-  axios.defaults.headers.common[
-    Defs.httpCustomHeader_XClientToken
-  ] = clientToken;
+  axios.defaults.headers.common[Defs.httpCustomHeader_XClientToken] = clientToken;
 }
 
 function setConnTokenHeader(connToken) {
