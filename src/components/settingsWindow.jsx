@@ -377,7 +377,7 @@ class SettingsWindow extends React.Component {
                               <td>
                                 <input
                                   autoFocus={false}
-                                  disabled={false}
+                                  disabled={true}
                                   value={this.getClientName()}
                                   onChange={(ev) => this.handleChange(ev)}
                                   id="client-name"
@@ -386,23 +386,7 @@ class SettingsWindow extends React.Component {
                                   size="32"
                                 />
                               </td>
-                              <tr>&nbsp;</tr>
-                              <td>
-                                <Button
-                                  type="button"
-                                  variant="contained"
-                                  disabled={disabledWhileUpdating}
-                                  style={{
-                                    width: "130px",
-                                    color: "#0000b0",
-                                  }}
-                                  onClick={(ev) =>
-                                    this.handleSetClientNameClick(ev)
-                                  }
-                                >
-                                  Set
-                                </Button>
-                              </td>
+                            <tr>&nbsp;</tr>
                             </tr>
                             <tr>&nbsp;</tr>
                             <tr>
@@ -414,7 +398,7 @@ class SettingsWindow extends React.Component {
                               <td>
                                 <input
                                   autoFocus={false}
-                                  disabled={false}
+                                  disabled={true}
                                   value={this.getServiceAddress()}
                                   onChange={(ev) => this.handleChange(ev)}
                                   id="service-address"
@@ -423,23 +407,7 @@ class SettingsWindow extends React.Component {
                                   size="32"
                                 />
                               </td>
-                              <tr>&nbsp;</tr>
-                              <td>
-                                <Button
-                                  type="button"
-                                  variant="contained"
-                                  disabled={disabledWhileUpdating}
-                                  style={{
-                                    width: "130px",
-                                    color: "#0000b0",
-                                  }}
-                                  onClick={(ev) =>
-                                    this.handleSetServiceAddressClick(ev)
-                                  }
-                                >
-                                  Set
-                                </Button>
-                              </td>
+                            <tr>&nbsp;</tr>
                             </tr>
                           </tbody>
                         </table>
