@@ -48,6 +48,7 @@ class PingPlotWindow extends React.Component {
 
     console.log("PingPlotWindow constructor");
     this.state = { count: 0 };
+    this.tcMode = false;
     // this.intervalId = null;
     // this.progress = 0;
 
@@ -390,6 +391,9 @@ class PingPlotWindow extends React.Component {
       const date = new Date(jod["timeStamp"]);
       const mark = jod["mark"];
 
+      // tcMode
+      this.tcMode = mark & Defs.pingMarkTcMode;
+
       // timeline
       let tlStatusStyle = null;
       let tlTooltipStyle = null;
@@ -727,6 +731,7 @@ class PingPlotWindow extends React.Component {
   render() {
     console.log("pingPlotWindow.render called");
 
+    const tcMode = this.tcMode;
     const showSpinner =
       this.allButtonsDisabled && this.zoomLevel >= ZOOMLEVEL_1DAY;
     const timeLineHeader = this.getTitle();
@@ -994,43 +999,50 @@ class PingPlotWindow extends React.Component {
             }}
           />
         </div>
-        <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
-          <p style={{ fontSize: "80%", fontWeight: "bold" }}>{throughputHeaderPri}</p>
-        </div>
-        <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
-          <Chart
-            width={850}
-            height={140}
-            chartType="LineChart"
-            data={this.getTxRatePriData()}
-            chartEvents={this.chartEvents}
-            options={{
-              chartArea: {left: 90,top: 20,width:650,height: 100},
-              pointSize: 2,
-              hAxis: { textPosition: "none" },
-              vAxis: { title: "up", titleTextStyle: {bold: true} },
-              legend: { position: "none" },
-              titleTextStyle: { bold: false },
-            }}
-          />
-        </div>
-        <div style={{ marginLeft: 0, marginTop: -16, marginBottom: 0 }}>
-          <Chart
-            width={850}
-            height={140}
-            chartType="LineChart"
-            data={this.getRxRatePriData()}
-            chartEvents={this.chartEvents}
-            options={{
-              chartArea: {left: 90,top: 20,width:650,height: 100},
-              pointSize: 2,
-              hAxis: { textPosition: "none" },
-              vAxis: { title: "down", direction: -1, titleTextStyle: {bold: true} },
-              legend: { position: "none" },
-              titleTextStyle: { bold: false },
-            }}
-          />
-        </div>
+        {this.tcMode && (
+          <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
+        
+            <p style={{ fontSize: "80%", fontWeight: "bold" }}>{throughputHeaderPri}</p>
+          </div>
+        )}
+        {this.tcMode && (
+          <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
+            <Chart
+              width={850}
+              height={140}
+              chartType="LineChart"
+              data={this.getTxRatePriData()}
+              chartEvents={this.chartEvents}
+              options={{
+                chartArea: {left: 90,top: 20,width:650,height: 100},
+                pointSize: 2,
+                hAxis: { textPosition: "none" },
+                vAxis: { title: "up", titleTextStyle: {bold: true} },
+                legend: { position: "none" },
+                titleTextStyle: { bold: false },
+              }}
+            />
+          </div>
+        )}
+        {this.tcMode && (
+          <div style={{ marginLeft: 0, marginTop: -16, marginBottom: 0 }}>
+            <Chart
+              width={850}
+              height={140}
+              chartType="LineChart"
+              data={this.getRxRatePriData()}
+              chartEvents={this.chartEvents}
+              options={{
+                chartArea: {left: 90,top: 20,width:650,height: 100},
+                pointSize: 2,
+                hAxis: { textPosition: "none" },
+                vAxis: { title: "down", direction: -1, titleTextStyle: {bold: true} },
+                legend: { position: "none" },
+                titleTextStyle: { bold: false },
+              }}
+            />
+          </div>
+        )}
         <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
           <p style={{ fontSize: "80%", fontWeight: "bold" }}>{cpuUtlzHeader}</p>
         </div>
