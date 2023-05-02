@@ -377,7 +377,7 @@ class SettingsWindow extends React.Component {
                               <td>
                                 <input
                                   autoFocus={false}
-                                  disabled={true}
+                                  disabled={false}
                                   value={this.getClientName()}
                                   onChange={(ev) => this.handleChange(ev)}
                                   id="client-name"
