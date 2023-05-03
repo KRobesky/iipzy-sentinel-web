@@ -29,7 +29,7 @@ import * as serviceWorker from "./serviceWorker";
 // import "bootstrap/dist/css/bootstrap.css";
 // import "font-awesome/css/font-awesome.css";
 
-import Defs from "iipzy-shared/src/defs";
+import Defs, { ipcConsoleLog } from "iipzy-shared/src/defs";
 
 import cipher from "./utils/cipher";
 import cookie from "./utils/cookie";
@@ -91,11 +91,12 @@ async function main() {
     const paramsEncrypted = decodeURI(paramsURI);
     if (paramsEncrypted) {
       const params = JSON.parse(cipher.decrypt(paramsEncrypted));
-      const { userName, password, from } = params;
+      const { userName, password, from, clientName } = params;
 
       console.log("userName = " + userName);
       console.log("passwordEncrypted = " + password);
       console.log("from = " + from);
+      console.log("cientName = " + clientName);
 
       if (userName) cookie.set("userName", userName);
       if (password) cookie.set("password", password);

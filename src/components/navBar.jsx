@@ -34,67 +34,77 @@ class NavBar extends React.Component {
     const needLogin = NavBar.needLogin;
     const needSettings = NavBar.needSettings;
 
+    const user = NavBar.user;
+    const device = NavBar.device;
+
     return (
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div className="navbar-nav">
-            {!needLogin && !needSettings && (
+      <div>
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+          <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div className="navbar-nav">
+              {!needLogin && !needSettings && (
+                <NavLink
+                  className="nav-item nav-link"
+                  onClick={this.handleClick}
+                  to={Defs.urlPingPlot}
+                >
+                  Charts
+                </NavLink>
+              )}
+              {!needLogin && !needSettings && (
+                <NavLink
+                  className="nav-item nav-link"
+                  onClick={this.handleClick}
+                  to={Defs.urlThroughputTest}
+                >
+                  Speed Test
+                </NavLink>
+              )}
+              {!needLogin && !needSettings && (
+                <NavLink
+                  className="nav-item nav-link"
+                  onClick={this.handleClick}
+                  to={Defs.urlDevices}
+                >
+                  Network Devices
+                </NavLink>
+              )}
+              {needLogin && (
+                <NavLink
+                  className="nav-item nav-link"
+                  onClick={this.handleClick}
+                  to={Defs.urlLogin}
+                >
+                  Log in
+                </NavLink>
+              )}
               <NavLink
                 className="nav-item nav-link"
                 onClick={this.handleClick}
-                to={Defs.urlPingPlot}
+                to={Defs.urlSettings}
               >
-                Charts
+                Settings
               </NavLink>
-            )}
-            {!needLogin && !needSettings && (
-              <NavLink
-                className="nav-item nav-link"
-                onClick={this.handleClick}
-                to={Defs.urlThroughputTest}
-              >
-                Speed Test
+              <NavLink className="nav-item nav-link" to={Defs.urlCloseSentinel}>
+                Home
               </NavLink>
-            )}
-            {!needLogin && !needSettings && (
-              <NavLink
-                className="nav-item nav-link"
-                onClick={this.handleClick}
-                to={Defs.urlDevices}
-              >
-                Network Devices
-              </NavLink>
-            )}
-            {needLogin && (
-              <NavLink
-                className="nav-item nav-link"
-                onClick={this.handleClick}
-                to={Defs.urlLogin}
-              >
-                Log in
-              </NavLink>
-            )}
-            <NavLink
-              className="nav-item nav-link"
-              onClick={this.handleClick}
-              to={Defs.urlSettings}
-            >
-              Settings
-            </NavLink>
-            <NavLink className="nav-item nav-link" to={Defs.urlCloseSentinel}>
-              Home
-            </NavLink>
+            </div>
           </div>
+        </nav>
+        <div style={{ marginLeft: 24, textAlign: "left" }}>
+            <p style={{ fontSize: "100%" }}>User: {user}.      Device: {device}</p>
         </div>
-      </nav>
+      </div>
     );
   }
 }
 
 NavBar.isAdmin = false;
+NavBar.device = "no device";
 NavBar.needLogin = true;
 NavBar.needSettings = false;
 NavBar.sentinelOnline = false;
+NavBar.user = "not logged in";
 
 const handleSentinelOnLineStatus = (event, data) => {
   const { sentinelStatus } = data;
