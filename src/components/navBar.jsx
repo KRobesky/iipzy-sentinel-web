@@ -34,8 +34,8 @@ class NavBar extends React.Component {
     const needLogin = NavBar.needLogin;
     const needSettings = NavBar.needSettings;
 
-    const user = NavBar.user;
-    const device = NavBar.device;
+    const clientName = NavBar.clientName;
+    const userName = NavBar.userName;
 
     return (
       <div>
@@ -92,7 +92,7 @@ class NavBar extends React.Component {
           </div>
         </nav>
         <div style={{ marginLeft: 24, textAlign: "left" }}>
-            <p style={{ fontSize: "100%" }}>User: {user}.      Device: {device}</p>
+            <p style={{ fontSize: "100%" }}>User: {userName}.&nbsp;&nbsp;Device: {clientName}</p>
         </div>
       </div>
     );
@@ -100,11 +100,11 @@ class NavBar extends React.Component {
 }
 
 NavBar.isAdmin = false;
-NavBar.device = "no device";
+NavBar.clientName= "no device";
 NavBar.needLogin = true;
 NavBar.needSettings = false;
 NavBar.sentinelOnline = false;
-NavBar.user = "not logged in";
+NavBar.userName = "not logged in";
 
 const handleSentinelOnLineStatus = (event, data) => {
   const { sentinelStatus } = data;
@@ -126,7 +126,15 @@ const handleLoginStatus = (event, data) => {
   if (app != null) app.doRender();
 };
 
+const handleNavBarInfo = (event, data) => {
+  const { userName, clientName } = data;
+  NavBar.clientName = clientName;
+  NavBar.userName = userName;
+  if (app != null) app.doRender();
+}
+
 eventManager.on(Defs.ipcSentinelOnlineStatus, handleSentinelOnLineStatus);
 eventManager.on(Defs.pevLoginStatus, handleLoginStatus);
+eventManager.on(Defs.ipcNavBarInfo, handleNavBarInfo);
 
 export default NavBar;

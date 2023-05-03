@@ -86,6 +86,8 @@ async function main() {
   */
 
   let sendCredentials = false;
+  let clientName_ = "";
+  let userName_ = "";
   const paramsURI = getQueryVariable("params");
   if (paramsURI) {
     const paramsEncrypted = decodeURI(paramsURI);
@@ -102,6 +104,8 @@ async function main() {
       if (password) cookie.set("password", password);
       if (from) cookie.set("fromOrigin", from);
       sendCredentials = true;
+      clientName_ = clientName;
+      userName_ = userName;
     }
   }
 
@@ -131,6 +135,7 @@ async function main() {
   );
 
   if (sendCredentials) credentials.send();
+  if (clientName_) eventManager.send(Defs.ipcNavBarInfo, { clientName: clientName_, userName: userName_} );
 }
 
 main();
