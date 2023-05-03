@@ -386,28 +386,21 @@ class SettingsWindow extends React.Component {
                                   size="32"
                                 />
                               </td>
-                            <tr>&nbsp;</tr>
-                            </tr>
-                            <tr>&nbsp;</tr>
-                            <tr>
+                              <td>&nbsp;</td>
                               <td>
-                                <label htmlFor="service-address">
-                                  Service Address:&nbsp;&nbsp;
-                                </label>
+                                <Button
+                                  type="button"
+                                  variant="contained"
+                                  disabled={disabledWhileUpdating}
+                                  style={{
+                                    width: "130px",
+                                    color: "#0000b0",
+                                  }}
+                                  onClick={(ev) => this.handleSetClientNameClick(ev)}
+                                >
+                                  Set
+                                </Button>
                               </td>
-                              <td>
-                                <input
-                                  autoFocus={false}
-                                  disabled={true}
-                                  value={this.getServiceAddress()}
-                                  onChange={(ev) => this.handleChange(ev)}
-                                  id="service-address"
-                                  name="service-address"
-                                  type="text"
-                                  size="32"
-                                />
-                              </td>
-                            <tr>&nbsp;</tr>
                             </tr>
                           </tbody>
                         </table>
@@ -472,36 +465,6 @@ class SettingsWindow extends React.Component {
                         />
                         &nbsp;Simulate Offline&nbsp;&nbsp;
                       </tr>
-                      {/* <tr>
-                        <table>
-                          <tbody>
-                            <tr>
-                              <td>
-                                <input
-                                  type="checkbox"
-                                  name="action-wifi"
-                                  checked={this.getWifiChecked()}
-                                  disabled={disabledWhileUpdating}
-                                  onChange={(ev) => this.handleWifiClick(ev)}
-                                />
-                                &nbsp;WiFi&nbsp;&nbsp;
-                              </td>
-                              <td>
-                                <input
-                                  className="input_disabled"
-                                  readonly="readonly"
-                                  value={this.getNetwork()}
-                                  onClick={(ev) => this.handleNetworkClick(ev)}
-                                  id="network"
-                                  name="network"
-                                  type="text"
-                                  size="32"
-                                />
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </tr> */}
                       <tr>&nbsp;</tr>
                       <tr>
                         <Button
