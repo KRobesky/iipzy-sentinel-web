@@ -68,6 +68,10 @@ class SettingsWindow extends React.Component {
     return get_is_debugging();
   }
 
+  getRemoteSSHTitle() {
+    return SettingsWindow.settings.remoteSSHEnabled ? "Disable SSH" : "Enable SSH";
+  }
+
   getSimulateDroppedPacketsChecked() {
     return SettingsWindow.settings.simulateDroppedPackets;
   }
@@ -178,6 +182,14 @@ class SettingsWindow extends React.Component {
     setSettings("shutdownAppliance", true);
   }
 
+  handleRemoteSSHClick() {
+    console.log("SettingsWindow.handleRemoteSSHClick");
+    SettingsWindow.inProgress = true;
+    this.doRender();
+    setSettings("remoteSSHEnabled", !SettingsWindow.settings.remoteSSHEnabled);
+    SettingsWindow.settings.remoteSSHEnabled = !SettingsWindow.settings.remoteSSHEnabled;
+  }
+
   handleSendLogsClick(ev) {
     console.log("SettingsWindow handleSendLogsClick");
     SettingsWindow.inProgress = true;
@@ -250,6 +262,7 @@ class SettingsWindow extends React.Component {
   handleInfoPopupClick() {
     console.log("SettingsWindow.handleInfoPopupClick");
   }
+
 
   handleWiFiCloseClick(ev) {
     console.log("settingsWindow.handleWiFiCloseClick");
@@ -508,6 +521,21 @@ class SettingsWindow extends React.Component {
                           onClick={(ev) => this.handleShutdownClick(ev)}
                         >
                           Shutdown
+                        </Button>
+                      </tr>
+                      <tr>&nbsp;</tr>
+                      <tr>
+                        <Button
+                          type="button"
+                          variant="contained"
+                          disabled={disabledWhileUpdating}
+                          style={{
+                            width: "130px",
+                            color: "#0000b0",
+                          }}
+                          onClick={(ev) => this.handleRemoteSSHClick(ev)}
+                        >
+                          {this.getRemoteSSHTitle()}
                         </Button>
                       </tr>
                       <tr>&nbsp;</tr>
