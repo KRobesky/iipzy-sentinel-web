@@ -184,10 +184,10 @@ class SettingsWindow extends React.Component {
 
   handleRemoteSSHClick() {
     console.log("SettingsWindow.handleRemoteSSHClick");
+    SettingsWindow.settings.remoteSSHEnabled = !SettingsWindow.settings.remoteSSHEnabled;
     SettingsWindow.inProgress = true;
     this.doRender();
-    setSettings("remoteSSHEnabled", !SettingsWindow.settings.remoteSSHEnabled);
-    SettingsWindow.settings.remoteSSHEnabled = !SettingsWindow.settings.remoteSSHEnabled;
+    setSettings("remoteSSHEnabled", SettingsWindow.settings.remoteSSHEnabled);  
   }
 
   handleSendLogsClick(ev) {
