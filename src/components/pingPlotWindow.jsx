@@ -24,9 +24,11 @@ import SpinnerPopup from "./spinnerPopup";
 
 let app = null;
 
-// const roundToTwo = num => {
-//   return +(Math.round(num + "e+1") + "e-1");
-// };
+/*
+const roundToTwo = num => {
+   return +(Math.round(num + "e+1") + "e-1");
+};
+*/
 
 const ZOOMLEVEL_5MIN = 0;
 const ZOOMLEVEL_10MIN = 1;
@@ -335,6 +337,11 @@ class PingPlotWindow extends React.Component {
     return "";
   }
 
+  getTimeOfDay(date) {
+    const dsa = date.toLocaleString().split(' ');
+    return dsa[1] + " " + dsa[2];
+  }
+
   handlePingPlotData(jo) {
     if (this.selectedRow >= 0) {
       this.selectedRow--;
@@ -394,118 +401,113 @@ class PingPlotWindow extends React.Component {
       // tcMode
       this.tcMode = mark & Defs.pingMarkTcMode;
 
+      // netrate data
+      const rx_rate_mbits = this.round(jod.rx_rate_bits / 1000000, 2);
+      const tx_rate_mbits = this.round(jod.tx_rate_bits / 1000000, 2);
+      const rx_bw_peak_mbits = this.round(jod.rx_bw_peak_bits / 1000000, 2);
+      const tx_bw_peak_mbits = this.round(jod.tx_bw_peak_bits / 1000000, 2);
+      const rx_bw_quality_mbits = this.round(jod.rx_bw_quality_bits / 1000000, 2);
+      const tx_bw_quality_mbits = this.round(jod.tx_bw_quality_bits / 1000000, 2);
+      const rx_rate_pri_mbits = this.round((jod.rx_rate_dns_bits + jod.rx_rate_rt_bits) / 1000000, 2);
+      const tx_rate_pri_mbits = this.round((jod.tx_rate_dns_bits + jod.tx_rate_rt_bits) / 1000000, 2);
+
       // timeline
       let tlStatusStyle = null;
-      let tlTooltipStyle = null;
+      let tlTooltip = null;
       if (mark & Defs.pingMarkDropped) {
         // red
         tlStatusStyle = "point { size: 10; fill-color: #a52714; shape-type: square;  }";
-        tlTooltipStyle = date.toLocaleString() + ", dropped";
+        tlTooltip = this.getTimeOfDay(date) + ": dropped";
       } else if (mark & Defs.pingMarkSaved) {
         // blue
         tlStatusStyle = "point { size: 10; fill-color: #3366cc; shape-type: square;  }";
-        tlTooltipStyle = date.toLocaleString() + ", saved";
+        tlTooltip = this.getTimeOfDay(date) + ": saved";
       } else {
         // green
         tlStatusStyle = "point { size: 10; fill-color: #109618; shape-type: square;  }";
-        tlTooltipStyle = date.toLocaleString() + ", everything is hunky-dorry";
+        tlTooltip = this.getTimeOfDay(date) + ": everything is hunky-dorry";
       }
 
       this.timeLineArray.push([
         date,
         1,
         tlStatusStyle,
-        tlTooltipStyle,
+        tlTooltip,
       ]);
 
       // ping
       let millis = Number(jod["timeMillis"]);
 
       //const dropped = jod["dropped"];
-      let droppedStyle = null;
-      let tooltipStyle = null;
+      let dropped = null;
+      let tooltip = null;
       if (mark & Defs.pingMarkDropped) {
         millis = this.prevTimeMillis;
-        droppedStyle = "point { size: 4; fill-color: #a52714; }";
-        tooltipStyle = date.toLocaleString() + ", dropped packet";
+        dropped = "point { size: 4; fill-color: #a52714; }";
+        tooltip = this.getTimeOfDay(date) + ": dropped packet";
       } else {
         this.prevTimeMillis = millis;
-        tooltipStyle = date.toLocaleString() + ", " + millis + " ms";
+        tooltip = this.getTimeOfDay(date) + ": " + millis + " ms";
       }
 
-      const idLinkIdStyle = JSON.stringify({ id, linkId, mark });
-      // console.log("...idLinkIdStyle = " + idLinkIdStyle);
-      // console.log("handlePingPlotData: entry[" + i + "], date =" + date);
+      const idLinkId = JSON.stringify({ id, linkId, mark });
 
       this.pingArray.push([
         date,
         millis,
-        droppedStyle,
-        tooltipStyle,
-        idLinkIdStyle,
+        dropped,
+        tooltip,
+        idLinkId,
       ]);
 
       // netrate
-      const rx_rate_bits = jod["rx_rate_bits"];
-      const tx_rate_bits = jod["tx_rate_bits"];
-      const rx_rate_pri_bits = jod["rx_rate_dns_bits"] + jod["rx_rate_rt_bits"];
-      const tx_rate_pri_bits = jod["tx_rate_dns_bits"] + jod["tx_rate_rt_bits"];
-      // console.log("+++rx_rate_bits=" + rx_rate_bits + ", tx_rate_bits=" + tx_rate_bits);
-
-      let rx_mbits = this.round(rx_rate_bits / 1000000, 2);
-      //rx_mbits = Math.round(rx_mbits);
-      let tx_mbits = this.round(tx_rate_bits / 1000000, 2);
-      //tx_mbits = Math.round(tx_mbits);
-      let rx_pri_mbits = this.round(rx_rate_pri_bits / 1000000, 2);
-      //rx_mbits = Math.round(rx_mbits);
-      let tx_pri_mbits = this.round(tx_rate_pri_bits / 1000000, 2);
-      //tx_mbits = Math.round(tx_mbits);
-
-      const rxTooltipStyle = date.toLocaleString() + ", " + rx_mbits + " mbits";
-      const txTooltipStyle = date.toLocaleString() + ", " + tx_mbits + " mbits";
+      const rxTooltip = this.getTimeOfDay(date) + ": " + rx_rate_mbits + " mbits, peak capacity " + rx_bw_peak_mbits + " mbits, quality capacity " + rx_bw_quality_mbits + " mbits";
+      const txTooltip = this.getTimeOfDay(date) + ": " + tx_rate_mbits + " mbits, peak capacity " + tx_bw_peak_mbits + " mbits, quality capacity " + tx_bw_quality_mbits + " mbits";
+      const rxPriTooltip = this.getTimeOfDay(date) + ": " + rx_rate_pri_mbits + " mbits, peak capacity " + rx_bw_peak_mbits + " mbits, quality capacity " + rx_bw_quality_mbits + " mbits";
+      const txPriTooltip = this.getTimeOfDay(date) + ": " + tx_rate_pri_mbits + " mbits, peak capacity " + tx_bw_peak_mbits + " mbits, quality capacity " + tx_bw_quality_mbits + " mbits";
 
       this.rxRateArray.push([
         date,
-        rx_mbits,
-        rxTooltipStyle,
+        rx_rate_mbits,
+        rxTooltip,
       ]);
 
        this.txRateArray.push([
         date,
-        tx_mbits,
-        txTooltipStyle,
+        tx_rate_mbits,
+        txTooltip,
       ]);
 
       this.rxRatePriArray.push([
         date,
-        rx_pri_mbits,
-        rxTooltipStyle,
+        rx_rate_pri_mbits,
+        rxPriTooltip,
       ]);
 
        this.txRatePriArray.push([
         date,
-        tx_pri_mbits,
-        txTooltipStyle,
+        tx_rate_pri_mbits,
+        txPriTooltip,
       ]);
 
       // cpu utilization
-      const cpu_utlz = jod["cpu_utlz_user"] + jod["cpu_utlz_nice"] + jod["cpu_utlz_system"] + jod["cpu_utlz_iowait"] + jod["cpu_utlz_steal"];
-      const cpuUtlzTooltipStyle = date.toLocaleString() + ", " + cpu_utlz + "%";
+      const cpu_utlz = this.round((jod.cpu_utlz_user + jod.cpu_utlz_nice + jod.cpu_utlz_system + jod.cpu_utlz_iowait + jod.cpu_utlz_steal), 2);
+      const cpuUtlzTooltip = this.getTimeOfDay(date) + ": " + cpu_utlz + "%";
 
       this.cpuUtlzArray.push([
         date,
         cpu_utlz,
-        cpuUtlzTooltipStyle,
+        cpuUtlzTooltip,
       ]);
 
       // cpu temperature
       const cpu_temp = jod["temp_celsius"];
-      const cpuTempTooltipStyle = date.toLocaleString() + ", " + cpu_temp + " celsius";
+      const cpuTempTooltip = this.getTimeOfDay(date) + ": " + cpu_temp + " celsius";
       
       this.cpuTempArray.push([
         date,
         cpu_temp,
-        cpuTempTooltipStyle,
+        cpuTempTooltip,
       ]);
     }
 
@@ -736,12 +738,7 @@ class PingPlotWindow extends React.Component {
       this.allButtonsDisabled && this.zoomLevel >= ZOOMLEVEL_1DAY;
     const timeLineHeader = this.getTitle();
     const pingHeader = "Latency Milliseconds";
-    /*
-    const throughputUpHeader = "Throughput Up (" + this.getTitle() + ")";
-    const throughputDownHeader = "Throughput Down (" + this.getTitle() + ")";
-    const throughputUpHeaderPri = "Throughput Up - High Priority (" + this.getTitle() + ")";
-    const throughputDownHeaderPri = "Throughput Down - High Priority (" + this.getTitle() + ")";
-    */
+
     const throughputHeader = "Throughput Mbits";
     const throughputHeaderPri = "Throughput Mbits - High Priority";
     const cpuUtlzHeader = "CPU Utilization";
@@ -757,7 +754,7 @@ class PingPlotWindow extends React.Component {
         <div style={{ marginLeft: 20, textAlign: "left" }}>
           <p style={{ fontSize: "80%", fontWeight: "bold" }}>{timeLineHeader}</p>
         </div>
-        <div style={{ marginLeft: 0, marginTop: -20, marginBottom: 0 }}>
+        <div style={{ marginLeft: -10, marginTop: -20, marginBottom: 0 }}>
           <Chart
             width={750}
             height={80}
