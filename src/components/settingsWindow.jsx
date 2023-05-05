@@ -14,8 +14,8 @@ import sentinelInfo from "../utils/sentinelInfo";
 
 import InfoPopup from "./infoPopup";
 import Navigator from "./navigator";
+import PasswordPopup from "./passwordPopup";
 import SpinnerPopup from "./spinnerPopup";
-import WiFiPopup from "./wifiPopup";
 
 let app = null;
 
@@ -69,7 +69,7 @@ class SettingsWindow extends React.Component {
   }
 
   getRemoteSSHTitle() {
-    return SettingsWindow.settings.remoteSSHEnabled ? "Disable SSH" : "Enable SSH";
+    return SettingsWindow.settings.remoteSSHState ? "Disable SSH" : "Enable SSH";
   }
 
   getSimulateDroppedPacketsChecked() {
@@ -91,6 +91,7 @@ class SettingsWindow extends React.Component {
     return SettingsWindow.uploadSeconds;
   }
 
+  /*
   getWifiChecked() {
     return (
       SettingsWindow.settings &&
@@ -106,6 +107,7 @@ class SettingsWindow extends React.Component {
       SettingsWindow.settings.wifiStatus.network
     );
   }
+  */
 
   getInfoMessage() {
     return SettingsWindow.infoMessage;
@@ -182,12 +184,43 @@ class SettingsWindow extends React.Component {
     setSettings("shutdownAppliance", true);
   }
 
-  handleRemoteSSHClick() {
+  async handleRemoteSSHClick() {
     console.log("SettingsWindow.handleRemoteSSHClick");
-    SettingsWindow.settings.remoteSSHEnabled = !SettingsWindow.settings.remoteSSHEnabled;
     SettingsWindow.inProgress = true;
     this.doRender();
-    setSettings("remoteSSHEnabled", SettingsWindow.settings.remoteSSHEnabled);  
+    if (!SettingsWindow.settings.remoteSSHState) {
+      // enabling.
+      // get password
+      SettingsWindow.showRemoteSSHPasswordPopup = true;
+    } else {
+      // disabling.
+      const { data } = await setSettings("remoteSSHState", { state: false });
+      getSettings();
+      SettingsWindow.inProgress = false;
+      this.doRender();
+    }
+  }
+
+  async handleRemoteSSHPasswordPopupClick(password) {
+    console.log("settingsWindow.handleRemoteSSHPasswordPopupClick: password = " + password);
+    this.doRender();
+    const { data } = await setSettings("remoteSSHState", { state: true, password });
+    console.log("SettingsWindow.handleRemoteSSHClick: data = " + JSON.stringify(data)) 
+    if (data && data.message) {
+      SettingsWindow.infoMessage = data.message;
+    } else {
+      SettingsWindow.infoMessage = "(Error) failed";
+    }
+    SettingsWindow.showInfoPopup = true;
+    //SettingsWindow.inProgress = false;
+    this.doRender();
+  }
+  
+  hideRemoteSSHPasswordPopup() {
+    SettingsWindow.showRemoteSSHPasswordPopup = false;
+    //SettingsWindow.buttonsEnabled = true;
+    //SettingsWindow.inProgress = false;
+    //getSettings();
   }
 
   handleSendLogsClick(ev) {
@@ -247,39 +280,32 @@ class SettingsWindow extends React.Component {
     setSettings("simulateOffLine", SettingsWindow.settings.simulateOffLine);
   }
 
+  /*
   handleWifiClick(ev) {
     console.log("SettingsWindow.handleWifiClick: " + ev.target.checked);
     joinLeaveWifi(ev.target.checked);
   }
+  */
 
-  handleNetworkClick(ev) {
+  /*
+  handlePasswordClick(ev) {
     console.log("SettingsWindow.handleNetworkClick");
-    SettingsWindow.showWiFiPopup = true;
+    SettingsWindow.showRemoteSSHPasswordPopup = true;
     SettingsWindow.inProgress = true;
     this.doRender();
   }
+  */
 
   handleInfoPopupClick() {
     console.log("SettingsWindow.handleInfoPopupClick");
   }
 
-
-  handleWiFiCloseClick(ev) {
-    console.log("settingsWindow.handleWiFiCloseClick");
-    this.doRender();
-  }
-
   hideResponsePopup() {
     SettingsWindow.showInfoPopup = false;
     SettingsWindow.buttonsEnabled = true;
-    this.doRender();
-  }
-
-  hideWiFiPopup() {
-    SettingsWindow.showWiFiPopup = false;
-    SettingsWindow.buttonsEnabled = true;
     SettingsWindow.inProgress = false;
     getSettings();
+    this.doRender();
   }
 
   handleRestorePingChartDataClick(ev) {
@@ -343,7 +369,7 @@ class SettingsWindow extends React.Component {
     const showInfoPopup = SettingsWindow.showInfoPopup;
 
     const showSpinner = SettingsWindow.inProgress;
-    const showWiFiPopup = SettingsWindow.showWiFiPopup;
+    const showRemoteSSHPasswordPopup = SettingsWindow.showRemoteSSHPasswordPopup;
 
     const settings_ = SettingsWindow.settings;
 
@@ -354,11 +380,10 @@ class SettingsWindow extends React.Component {
           <p style={{ fontSize: "140%" }}>Sentinel Settings</p>
         </div>
         {showSpinner && <SpinnerPopup />}
-        {showWiFiPopup && (
-          <WiFiPopup
-            settings={settings_}
-            onClose={(ev) => this.handleWiFiCloseClick(ev)}
-            closePopup={this.hideWiFiPopup.bind(this)}
+        {showRemoteSSHPasswordPopup && (
+          <PasswordPopup
+            onSubmit={(ev) => this.handleRemoteSSHPasswordPopupClick(ev)}
+            closePopup={this.hideRemoteSSHPasswordPopup.bind(this)}
           />
         )}
         {showInfoPopup && (
@@ -799,7 +824,8 @@ SettingsWindow.buttonsEnabled = true;
 SettingsWindow.inProgress = false;
 SettingsWindow.infoMessage = "";
 SettingsWindow.showInfoPopup = false;
-SettingsWindow.showWiFiPopup = false;
+SettingsWindow.showRemoteSSHPasswordPopup = false;
+SettingsWindow.remoteSSHPassword = "";
 
 async function getSettings() {
   console.log("SettingsWindow.getSettings");
@@ -813,12 +839,12 @@ async function getSettings() {
   );
   if (app) app.doRender();
 }
-
+/*
 async function joinLeaveWifi(checked) {
   SettingsWindow.wifi = checked;
   SettingsWindow.inProgress = true;
   if (app) app.doRender();
-  if (SettingsWindow.wifi) SettingsWindow.showWiFiPopup = true;
+  if (SettingsWindow.wifi) SettingsWindow.showPasswordPopup = true;
   else {
     const wifiJoin = { network: "", password: "" };
     await setSettings("wifiJoin", wifiJoin);
@@ -827,6 +853,7 @@ async function joinLeaveWifi(checked) {
   }
   if (app) app.doRender();
 }
+*/
 
 async function restoreFile(restoreName) {
   SettingsWindow.inProgress = true;
@@ -858,11 +885,13 @@ async function setSettings(name, value) {
   );
   let settings_ = {};
   settings_[name] = value;
-  const ret = await settings.setSettings({ settings: settings_ });
+  const { status, data } = await settings.setSettings({ settings: settings_ });
+  console.log("---AFTER settings.setSetting");
+  console.log("SettingsWindow.setSettings: status = " + status + ", data = " + JSON.stringify(data));
   //??TODO error check.
   SettingsWindow.inProgress = false;
   if (app) app.doRender();
-  return ret;
+  return { status, data };
 }
 
 async function uploadFile(method, file) {
