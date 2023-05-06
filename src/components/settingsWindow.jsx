@@ -203,15 +203,20 @@ class SettingsWindow extends React.Component {
 
   async handleRemoteSSHPasswordPopupClick(password) {
     console.log("settingsWindow.handleRemoteSSHPasswordPopupClick: password = " + password);
-    this.doRender();
-    const { data } = await setSettings("remoteSSHState", { state: true, password });
-    console.log("SettingsWindow.handleRemoteSSHClick: data = " + JSON.stringify(data)) 
-    if (data && data.message) {
-      SettingsWindow.infoMessage = data.message;
+    if (password) {
+      this.doRender();
+      const { data } = await setSettings("remoteSSHState", { state: true, password });
+      console.log("SettingsWindow.handleRemoteSSHClick: data = " + JSON.stringify(data)) 
+      if (data && data.message) {
+        SettingsWindow.infoMessage = data.message;
+      } else {
+        SettingsWindow.infoMessage = "(Error) failed";
+      }
+      SettingsWindow.showInfoPopup = true;
     } else {
-      SettingsWindow.infoMessage = "(Error) failed";
+      // user cancelled.
+      SettingsWindow.inProgress = false;
     }
-    SettingsWindow.showInfoPopup = true;
     //SettingsWindow.inProgress = false;
     this.doRender();
   }

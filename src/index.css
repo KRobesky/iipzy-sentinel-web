@@ -77,6 +77,15 @@ code {
   background: white;
 }
 
+.popup_inner_tall {
+  position: relative;
+  top: 35%;
+  width: 450px;
+  height: 230px;
+  margin: auto;
+  background: white;
+}
+
 .popup_inner_medium {
   position: relative;
   top: 20%;

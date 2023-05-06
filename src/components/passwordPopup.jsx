@@ -11,11 +11,15 @@ class PasswordPopup extends React.Component {
 
     console.log("PasswordPopup.constructor");
 
-    this.state = { password: "" };
+    this.state = { password: "", showPassword: false };
   }
 
   getPassword() {
     return this.state.password;
+  }
+
+  getShowPasswordChecked() {
+    return this.state.showPassword;
   }
 
   handleChange(ev) {
@@ -33,6 +37,10 @@ class PasswordPopup extends React.Component {
     this.props.onSubmit("");
     this.props.closePopup();
     this.setState({ password: "" });
+  }
+
+  handleShowPasswordClick(ev) {
+    this.setState({showPassword: ev.target.checked});
   }
 
   handleSubmitClick(ev) {
@@ -54,12 +62,12 @@ class PasswordPopup extends React.Component {
       <div>
         <Navigator />
         <div className="popup_over">
-          <div className="popup_inner">
+          <div className="popup_inner_tall">
             <div style={{ marginLeft: 20, textAlign: "left" }}>
               <p style={{ fontSize: "140%" }}>Enter Password</p>
             </div>
             <Input
-              type="password"
+              type={ this.state.showPassword ? "input" : "password" }
               autofocus={true}
               disabled={false}
               name="password"
@@ -68,8 +76,19 @@ class PasswordPopup extends React.Component {
               onChange={(ev) => this.handleChange(ev)}
               error=""
             />
+            <div style={{ marginLeft: 40, marginTop: -10, textAlign: "left" }}>
+              <input
+                type="checkbox"
+                name="action-log-level-detailed"
+                checked={this.getShowPasswordChecked()}
+                onChange={(ev) =>
+                  this.handleShowPasswordClick(ev)
+                }
+              />
+              &nbsp;Show Password&nbsp;&nbsp;
+            </div>
             <h1>{this.props.text}</h1>
-            <div style={{ textAlign: "center" }}>
+            <div style={{ textAlign: "center", marginTop: 16 }}>
               <Button
                 type="button"
                 variant="contained"
@@ -84,6 +103,7 @@ class PasswordPopup extends React.Component {
                 Submit
               </Button>
             </div>
+
             <CloseButton onClick={(ev) => this.handleCloseClick(ev)} />
           </div>
         </div>

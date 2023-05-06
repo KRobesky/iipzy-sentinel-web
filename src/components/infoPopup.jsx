@@ -1,4 +1,6 @@
 import React from "react";
+import Button from "@material-ui/core/Button";
+import copy from 'copy-to-clipboard';
 
 import CloseButton from "./closeButton";
 import Navigator from "./navigator";
@@ -10,6 +12,11 @@ class InfoPopup extends React.Component {
 
   getInfoMessage() {
     return this.props.getInfoMessage();
+  }
+
+  handleCopyClick(ev) {
+    console.log("...Popup handleCopyClick");
+    copy(this.props.getInfoMessage());
   }
 
   handleSubmitClick(ev) {
@@ -33,6 +40,19 @@ class InfoPopup extends React.Component {
                 <br />
                 {this.getInfoMessage()}
               </p>
+            </div>
+            <div align="center">
+              <Button
+                type="button"
+                variant="contained"
+                style={{
+                  width: "130px",
+                  color: "#0000b0",
+                }}
+                onClick={(ev) => this.handleCopyClick(ev)}
+              >
+                Copy
+              </Button>
             </div>
             <CloseButton onClick={(ev) => this.handleSubmitClick(ev)} />
           </div>
