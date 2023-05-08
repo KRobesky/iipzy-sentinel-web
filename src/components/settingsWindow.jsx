@@ -68,8 +68,16 @@ class SettingsWindow extends React.Component {
     return get_is_debugging();
   }
 
+  getRemoteSSHPortNumber() {
+      return SettingsWindow.remoteSSHPortNumber;
+  }
+
   getRemoteSSHTitle() {
     return SettingsWindow.settings.remoteSSHState ? "Disable SSH" : "Enable SSH";
+  }
+
+  getDisableRemoteSSHPortNumber() {
+    return SettingsWindow.settings.remoteSSHState;
   }
 
   getSimulateDroppedPacketsChecked() {
@@ -132,6 +140,11 @@ class SettingsWindow extends React.Component {
       case "nominal-latency-seconds": {
         //?? TODO - validate is integer between 1..9999
         SettingsWindow.nominalLatencySeconds = value;
+        break;
+      }
+      case "port-number": {
+        //?? TODO - validate is integer between 1..9999
+        SettingsWindow.remoteSSHPortNumber = value;
         break;
       }
       case "service-address": {
@@ -205,7 +218,7 @@ class SettingsWindow extends React.Component {
     console.log("settingsWindow.handleRemoteSSHPasswordPopupClick: password = " + password);
     if (password) {
       this.doRender();
-      const { data } = await setSettings("remoteSSHState", { state: true, password });
+      const { data } = await setSettings("remoteSSHState", { state: true, password, port:  SettingsWindow.remoteSSHPortNumber});
       console.log("SettingsWindow.handleRemoteSSHClick: data = " + JSON.stringify(data)) 
       if (data && data.message) {
         SettingsWindow.infoMessage = data.message;
@@ -375,6 +388,7 @@ class SettingsWindow extends React.Component {
 
     const showSpinner = SettingsWindow.inProgress;
     const showRemoteSSHPasswordPopup = SettingsWindow.showRemoteSSHPasswordPopup;
+    const remoteSSHPortNumberEmpty = !SettingsWindow.remoteSSHPortNumber || SettingsWindow.remoteSSHPortNumber === "";
 
     const settings_ = SettingsWindow.settings;
 
@@ -555,18 +569,44 @@ class SettingsWindow extends React.Component {
                       </tr>
                       <tr>&nbsp;</tr>
                       <tr>
-                        <Button
-                          type="button"
-                          variant="contained"
-                          disabled={disabledWhileUpdating}
-                          style={{
-                            width: "130px",
-                            color: "#0000b0",
-                          }}
-                          onClick={(ev) => this.handleRemoteSSHClick(ev)}
-                        >
-                          {this.getRemoteSSHTitle()}
-                        </Button>
+                        <table>
+                          <tbody>
+                            <tr>
+                              <td>
+                                <Button
+                                  type="button"
+                                  variant="contained"
+                                  disabled={disabledWhileUpdating || (!this.getDisableRemoteSSHPortNumber() && remoteSSHPortNumberEmpty) }
+                                  style={{
+                                    width: "130px",
+                                    color: "#0000b0",
+                                  }}
+                                  onClick={(ev) => this.handleRemoteSSHClick(ev)}
+                                >
+                                  {this.getRemoteSSHTitle()}
+                                </Button>
+                              </td>
+                              <td>
+                                <label htmlFor="port-number">
+                                &nbsp;&nbsp;Port:&nbsp;&nbsp;
+                                </label>
+                              </td>
+                              <td>
+                                <input
+                                  autoFocus={false}
+                                  disabled={this.getDisableRemoteSSHPortNumber()}
+                                  value={this.getRemoteSSHPortNumber()}
+                                  onChange={(ev) => this.handleChange(ev)}
+                                  id="port-number"
+                                  name="port-number"
+                                  type="text"
+                                  size="6"
+                                />
+                              </td>
+                              <td>&nbsp;</td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </tr>
                       <tr>&nbsp;</tr>
                       <tr>
@@ -830,6 +870,7 @@ SettingsWindow.inProgress = false;
 SettingsWindow.infoMessage = "";
 SettingsWindow.showInfoPopup = false;
 SettingsWindow.showRemoteSSHPasswordPopup = false;
+SettingsWindow.remoteSSHPortNumber = "";
 SettingsWindow.remoteSSHPassword = "";
 
 async function getSettings() {
