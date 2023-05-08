@@ -414,14 +414,18 @@ class PingPlotWindow extends React.Component {
       // timeline
       let tlStatusStyle = null;
       let tlTooltip = null;
-      if (mark & Defs.pingMarkDropped) {
+      if (mark & Defs.pingMarkDroppedTx) {
         // red
         tlStatusStyle = "point { size: 10; fill-color: #a52714; shape-type: square;  }";
         tlTooltip = this.getTimeOfDay(date) + ": dropped";
-      } else if (mark & Defs.pingMarkSaved) {
+      } else if (mark & Defs.pingMarkSavedRx) {
         // blue
         tlStatusStyle = "point { size: 10; fill-color: #3366cc; shape-type: square;  }";
-        tlTooltip = this.getTimeOfDay(date) + ": saved";
+        tlTooltip = this.getTimeOfDay(date) + ": saved down";
+      } else if (mark & Defs.pingMarkSavedTx) {
+        // blue
+        tlStatusStyle = "point { size: 10; fill-color: #3366cc; shape-type: square;  }";
+        tlTooltip = this.getTimeOfDay(date) + ": saved up";
       } else {
         // green
         tlStatusStyle = "point { size: 10; fill-color: #109618; shape-type: square;  }";
