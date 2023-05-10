@@ -395,11 +395,11 @@ class PingPlotWindow extends React.Component {
       const linkId = joe.linkId;
       const jod = joe.data;
 
-      const date = new Date(jod["timeStamp"]);
-      const mark = jod["mark"];
+      const date = new Date(jod.timeStamp);
+      const mark = jod.mark;
 
       // tcMode
-      this.tcMode = mark & Defs.pingMarkTcMode;
+      this.tcMode = jod.flag & Defs.pingFlagTcMode;
 
       // netrate data
       const rx_rate_mbits = this.round(jod.rx_rate_bits / 1000000, 2);

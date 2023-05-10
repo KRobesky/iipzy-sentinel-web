@@ -110,6 +110,7 @@ async function main() {
   }
 
   const clientToken = getQueryVariable("clientToken");
+  const isLocalClient = getQueryVariable("isLocalClient");
 
   sentinelInfo.init(sentinelIPAddress, window.location.protocol + "//");
 
@@ -136,6 +137,7 @@ async function main() {
 
   if (sendCredentials) credentials.send();
   if (clientName_) eventManager.send(Defs.ipcNavBarInfo, { clientName: clientName_, userName: userName_} );
+  eventManager.send(Defs.ipcIsLocalClient, { isLocalClient } );
 }
 
 main();

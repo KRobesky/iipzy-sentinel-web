@@ -3,7 +3,8 @@ import Button from "@material-ui/core/Button";
 import { FilePicker } from "react-file-picker";
 import FormData from "form-data";
 
-//import Defs from "iipzy-shared/src/defs";
+import Defs from "iipzy-shared/src/defs";
+import eventManager from "../ipc/eventManager";
 import { get_is_debugging, set_is_debugging } from "iipzy-shared/src/utils/globals";
 
 import http from "../ipc/httpService";
@@ -376,6 +377,8 @@ class SettingsWindow extends React.Component {
 
     if (!SettingsWindow.settings) return <div></div>;
 
+    const isLocalClient = SettingsWindow.isLocalClient;
+
     const disabledWhileUpdating = SettingsWindow.inProgress;
 
     const restorePingChartDataReady =
@@ -557,7 +560,7 @@ class SettingsWindow extends React.Component {
                         <Button
                           type="button"
                           variant="contained"
-                          disabled={disabledWhileUpdating}
+                          disabled={disabledWhileUpdating || !isLocalClient}
                           style={{
                             width: "130px",
                             color: "#0000b0",
@@ -858,6 +861,7 @@ class SettingsWindow extends React.Component {
 }
 
 SettingsWindow.settings = {};
+SettingsWindow.isLocalClient = false;
 SettingsWindow.sentinelIPAddress = "ip address not set";
 SettingsWindow.sentinelProtocol = "protocol not set";
 
@@ -961,5 +965,15 @@ async function uploadFile(method, file) {
   SettingsWindow.inProgress = false;
   if (app) app.doRender();
 }
+
+const handleIsLocalClient = (event, data) => {
+  const { isLocalClient } = data;
+  SettingsWindow.isLocalClient = isLocalClient;
+};
+
+eventManager.on(
+  Defs.ipcIsLocalClient,
+  handleIsLocalClient
+);
 
 export default SettingsWindow;

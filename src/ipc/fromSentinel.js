@@ -75,7 +75,7 @@ class FromSentinel {
     
     if (this.clientToken) http.setClientTokenHeader(this.clientToken);
 
-      while (this.running) {
+    while (this.running) {
       console.log("fromSentinel.run: calling eventWait");
       const { data, status } = await http.get(
         this.sentinelProtocol + this.sentinelIPAddress + "/api/eventWait",
