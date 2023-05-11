@@ -967,6 +967,7 @@ async function uploadFile(method, file) {
 }
 
 const handleIsLocalClient = (event, data) => {
+  console.log("handleIsLocalClient: data = " + JSON.stringify(data));
   const { isLocalClient } = data;
   SettingsWindow.isLocalClient = isLocalClient;
 };
