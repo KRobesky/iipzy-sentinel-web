@@ -414,7 +414,7 @@ class PingPlotWindow extends React.Component {
       // timeline
       let tlStatusStyle = null;
       let tlTooltip = null;
-      if (mark & Defs.pingMarkDroppedTx) {
+      if (mark & Defs.pingMarkDropped) {
         // red
         tlStatusStyle = "point { size: 10; fill-color: #a52714; shape-type: square;  }";
         tlTooltip = this.getTimeOfDay(date) + ": dropped";
