@@ -110,7 +110,7 @@ async function main() {
   }
 
   const clientToken = getQueryVariable("clientToken");
-  const isLocalClient = getQueryVariable("isLocalClient");
+  const isLocalClient = getQueryVariable("isLocalClient") === 'true';
 
   sentinelInfo.init(sentinelIPAddress, window.location.protocol + "//");
 
