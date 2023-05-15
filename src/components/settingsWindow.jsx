@@ -547,6 +547,7 @@ class SettingsWindow extends React.Component {
                           Run ACM
                         </Button>
                       </tr>
+                      <tr>&nbsp;</tr>
                       <tr>
                         <Button
                           type="button"
