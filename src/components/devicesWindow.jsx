@@ -4,6 +4,7 @@ import Defs from "iipzy-shared/src/defs";
 import { get_is_debugging } from "iipzy-shared/src/utils/globals";
 
 import eventManager from "../ipc/eventManager";
+import toSentinel from "../ipc/toSentinel";
 import devices from "../services/devices";
 
 import DevicePopup from "./devicePopup";
@@ -71,11 +72,13 @@ class DevicesWindow extends React.Component {
   componentDidMount() {
     console.log("DevicesWindow.componentDidMount");
     getDevices("?aliveonly=1");
+    toSentinel.send(Defs.ipcDevicesWindowMount, {});
   }
 
   componentWillUnmount() {
     console.log("DevicesWindow.componentWillUnmount");
     app = null;
+    toSentinel.send(Defs.ipcDevicesWindowUnmount, {});
   }
 
   doRender() {

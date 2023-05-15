@@ -242,6 +242,13 @@ class SettingsWindow extends React.Component {
     //getSettings();
   }
 
+  handleRunACMClick(ev) {
+    console.log("SettingsWindow handleRunACMClick");
+    SettingsWindow.inProgress = true;
+    this.doRender();
+    setSettings("runACM", true);
+  }
+  
   handleSendLogsClick(ev) {
     console.log("SettingsWindow handleSendLogsClick");
     SettingsWindow.inProgress = true;
@@ -526,6 +533,20 @@ class SettingsWindow extends React.Component {
                         &nbsp;Simulate Offline&nbsp;&nbsp;
                       </tr>
                       <tr>&nbsp;</tr>
+                      <tr>
+                        <Button
+                          type="button"
+                          variant="contained"
+                          disabled={disabledWhileUpdating}
+                          style={{
+                            width: "130px",
+                            color: "#0000b0",
+                          }}
+                          onClick={(ev) => this.handleRunACMClick(ev)}
+                        >
+                          Run ACM
+                        </Button>
+                      </tr>
                       <tr>
                         <Button
                           type="button"
