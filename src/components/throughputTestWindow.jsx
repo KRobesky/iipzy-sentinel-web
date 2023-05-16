@@ -552,7 +552,7 @@ class ThroughputTestWindow extends React.Component {
             {displayResults && (
               <div>
                 <table
-                  class="border-iipzy"
+                  className="border-iipzy"
                   style={{ margin: "20px 0px 0px 20px" }}
                 >
                   <tbody>

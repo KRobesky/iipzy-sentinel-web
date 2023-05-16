@@ -498,7 +498,7 @@ class PingPlotWindow extends React.Component {
 
       // cpu utilization
       const cpu_utlz = this.round((jod.cpu_utlz_user + jod.cpu_utlz_nice + jod.cpu_utlz_system + jod.cpu_utlz_iowait + jod.cpu_utlz_steal), 2);
-      const mem_use_pct = jod.mem_use_pct;
+      const mem_use_pct = this.round(jod.mem_use_pct, 2);
       const cpuUtlzTooltip = this.getTimeOfDay(date) + ": cpu utilization " + cpu_utlz + "%";
       const memUsePctTooltip = this.getTimeOfDay(date) + ": memory use " + mem_use_pct + "%";
 
