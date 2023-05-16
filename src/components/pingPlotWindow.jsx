@@ -165,10 +165,12 @@ class PingPlotWindow extends React.Component {
       "time",
       "cpu_utlz",
       { type: "string", role: "tooltip" },
+      "mem_use_pct",
+      { type: "string", role: "tooltip" },
     ];
 
     for (let i = 1; i < this.numPoints + 1; i++) {
-      this.cpuUtlzArray[i] = [null, 0, null];
+      this.cpuUtlzArray[i] = [null, 0, null, 0, null];
     }
 
     // cpu_temperature
@@ -496,12 +498,16 @@ class PingPlotWindow extends React.Component {
 
       // cpu utilization
       const cpu_utlz = this.round((jod.cpu_utlz_user + jod.cpu_utlz_nice + jod.cpu_utlz_system + jod.cpu_utlz_iowait + jod.cpu_utlz_steal), 2);
-      const cpuUtlzTooltip = this.getTimeOfDay(date) + ": " + cpu_utlz + "%";
+      const mem_use_pct = jod.mem_use_pct;
+      const cpuUtlzTooltip = this.getTimeOfDay(date) + ": cpu utilization " + cpu_utlz + "%";
+      const memUsePctTooltip = this.getTimeOfDay(date) + ": memory use " + mem_use_pct + "%";
 
       this.cpuUtlzArray.push([
         date,
         cpu_utlz,
         cpuUtlzTooltip,
+        mem_use_pct,
+        memUsePctTooltip
       ]);
 
       // cpu temperature
@@ -615,7 +621,7 @@ class PingPlotWindow extends React.Component {
       
       this.cpuUtlzArray.splice(1, this.cpuUtlzArray.length - 1);
       for (let i = 1; i < this.numPoints + 1; i++) {
-        this.cpuUtlzArray[i] = [null, 0, null];
+        this.cpuUtlzArray[i] = [null, 0, null, 0, null];
       }
             
       this.cpuTempArray.splice(1, this.cpuTempArray.length - 1);
@@ -665,7 +671,7 @@ class PingPlotWindow extends React.Component {
    
       this.cpuUtlzArray.splice(1, this.cpuUtlzArray.length - 1);
       for (let i = 1; i < this.numPoints + 1; i++) {
-        this.cpuUtlzArray[i] = [null, 0, null];
+        this.cpuUtlzArray[i] = [null, 0, null, 0, null];
       }
          
       this.cpuTempArray.splice(1, this.cpuTempArray.length - 1);
@@ -745,7 +751,7 @@ class PingPlotWindow extends React.Component {
 
     const throughputHeader = "Throughput Mbits";
     const throughputHeaderPri = "Throughput Mbits - High Priority";
-    const cpuUtlzHeader = "CPU Utilization";
+    const cpuUtlzHeader = "CPU/Memory Utilization";
     const cpuTempHeader = "CPU Temperature";
 
     //               vAxis: { title: "latency (milliseconds)" },
