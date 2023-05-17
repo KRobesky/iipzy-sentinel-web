@@ -757,7 +757,7 @@ class PingPlotWindow extends React.Component {
 
     const throughputHeader = "Throughput Mbits";
     const throughputHeaderPri = "Throughput Mbits - High Priority";
-    const cpuUtlzHeader = "CPU/Memory Utilization";
+    const cpuUtlzHeader = "CPU/Memory/Storage Utilization";
     const cpuTempHeader = "CPU Temperature";
 
     //               vAxis: { title: "latency (milliseconds)" },
