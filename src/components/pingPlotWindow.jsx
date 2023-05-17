@@ -1062,7 +1062,7 @@ class PingPlotWindow extends React.Component {
         <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
           <Chart
             width={850}
-            height={140}
+            height={200}
             chartType="LineChart"
             data={this.getCpuUtlzData()}
             chartEvents={this.chartEvents}
