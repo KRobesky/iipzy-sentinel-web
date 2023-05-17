@@ -1067,7 +1067,7 @@ class PingPlotWindow extends React.Component {
             data={this.getCpuUtlzData()}
             chartEvents={this.chartEvents}
             options={{
-              chartArea: {left: 90,top: 20,width:650,height: 100},
+              chartArea: {left: 90,top: 20,width:650,height: 160},
               pointSize: 2,
               hAxis: { textPosition: "none" },
               legend: { position: "none" },
