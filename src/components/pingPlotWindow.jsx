@@ -167,10 +167,12 @@ class PingPlotWindow extends React.Component {
       { type: "string", role: "tooltip" },
       "mem_use_pct",
       { type: "string", role: "tooltip" },
+      "stg_use_pct",
+      { type: "string", role: "tooltip" },
     ];
 
     for (let i = 1; i < this.numPoints + 1; i++) {
-      this.cpuUtlzArray[i] = [null, 0, null, 0, null];
+      this.cpuUtlzArray[i] = [null, 0, null, 0, null, 0, null];
     }
 
     // cpu_temperature
@@ -497,17 +499,21 @@ class PingPlotWindow extends React.Component {
       ]);
 
       // cpu utilization
-      const cpu_utlz = this.round((jod.cpu_utlz_user + jod.cpu_utlz_nice + jod.cpu_utlz_system + jod.cpu_utlz_iowait + jod.cpu_utlz_steal), 2);
+      const cpu_utlz = this.round((jod.cpu_utlz_pct), 2);
       const mem_use_pct = this.round(jod.mem_use_pct, 2);
+      const stg_use_pct = this.round(jod.stg_use_pct, 2);
       const cpuUtlzTooltip = this.getTimeOfDay(date) + ": cpu utilization " + cpu_utlz + "%";
       const memUsePctTooltip = this.getTimeOfDay(date) + ": memory use " + mem_use_pct + "%";
+      const stgUsePctTooltip = this.getTimeOfDay(date) + ": storage use " + stg_use_pct + "%";
 
       this.cpuUtlzArray.push([
         date,
         cpu_utlz,
         cpuUtlzTooltip,
         mem_use_pct,
-        memUsePctTooltip
+        memUsePctTooltip,
+        stg_use_pct,
+        stgUsePctTooltip
       ]);
 
       // cpu temperature
@@ -621,7 +627,7 @@ class PingPlotWindow extends React.Component {
       
       this.cpuUtlzArray.splice(1, this.cpuUtlzArray.length - 1);
       for (let i = 1; i < this.numPoints + 1; i++) {
-        this.cpuUtlzArray[i] = [null, 0, null, 0, null];
+        this.cpuUtlzArray[i] = [null, 0, null, 0, null, 0, null];
       }
             
       this.cpuTempArray.splice(1, this.cpuTempArray.length - 1);
@@ -671,7 +677,7 @@ class PingPlotWindow extends React.Component {
    
       this.cpuUtlzArray.splice(1, this.cpuUtlzArray.length - 1);
       for (let i = 1; i < this.numPoints + 1; i++) {
-        this.cpuUtlzArray[i] = [null, 0, null, 0, null];
+        this.cpuUtlzArray[i] = [null, 0, null, 0, null, 0, null];
       }
          
       this.cpuTempArray.splice(1, this.cpuTempArray.length - 1);
