@@ -321,8 +321,13 @@ class PingPlotWindow extends React.Component {
     );
   }
 
+  computeNeededPoints(zoomLevel) {
+    return this.zoomArray[zoomLevel].numPoints * this.zoomArray[zoomLevel].numSamples;
+  }
+
   getDisabledZoomOutButton() {
-    return this.zoomLevel === ZOOMLEVEL_MAX || this.allButtonsDisabled;
+    const atLimit = this.zoomLevel === ZOOMLEVEL_MAX || (this.numEntries > 0 && this.computeNeededPoints(this.zoomLevel + 1) > this.numEntries);
+    return atLimit || this.allButtonsDisabled;
   }
 
   getDisabledZoomInButton() {
