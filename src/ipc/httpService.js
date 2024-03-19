@@ -4,11 +4,19 @@ import https from "https";
 
 import Defs from "iipzy-shared/src/defs";
 
+import cookie from "../utils/cookie";
 import sentinelInfo from "../utils/sentinelInfo";
+
+const baseURLCookie = "baseURL";
 
 let httpInstance = null;
 
 function init() {
+  cookie.remove(Defs.httpCustomHeader_XAuthToken);
+  cookie.remove(baseURLCookie);
+  cookie.remove(Defs.httpCustomHeader_XClientToken);
+  cookie.remove(Defs.httpCustomHeader_XConnToken);
+
   if (sentinelInfo.getSentinelProtocol().startsWith("https")) {
     httpInstance = axios.create({
       httpAgent: new https.Agent({
@@ -118,21 +126,31 @@ function logAuthToken() {
 function setAuthTokenHeader(authToken) {
   console.log("setAuthTokenHeader = " + authToken);
   axios.defaults.headers.common[Defs.httpCustomHeader_XAuthToken] = authToken;
+  cookie.set(Defs.httpCustomHeader_XAuthToken, authToken);
 }
 
 function setBaseURL(baseURL) {
   axios.defaults.baseURL = "http://" + baseURL + "/";
+  cookie.set(baseURLCookie, axios.defaults.baseURL);
   console.log("setBaseURL = " + axios.defaults.baseURL);
+}
+
+function getClientTokenHeader() {
+  //console.log("getClientTokenHeader");
+  //console.log("getClientTokenHeader = " + cookie.get(Defs.httpCustomHeader_XClientToken)); // axios.defaults.headers.common[Defs.httpCustomHeader_XClientToken]);
+  return cookie.get(Defs.httpCustomHeader_XClientToken); // axios.defaults.headers.common[Defs.httpCustomHeader_XClientToken];
 }
 
 function setClientTokenHeader(clientToken) {
   console.log("setClientTokenHeader = " + clientToken);
   axios.defaults.headers.common[Defs.httpCustomHeader_XClientToken] = clientToken;
+  cookie.set(Defs.httpCustomHeader_XClientToken, clientToken);
 }
 
 function setConnTokenHeader(connToken) {
   console.log("setConnTokenHeader = " + connToken);
   axios.defaults.headers.common[Defs.httpCustomHeader_XConnToken] = connToken;
+  cookie.set(Defs.httpCustomHeader_XConnToken, connToken);
 }
 
 function addHeaders(config) {
@@ -140,6 +158,8 @@ function addHeaders(config) {
   configWithHeaders.headers = {};
   configWithHeaders.headers[Defs.httpCustomHeader_XTimestamp] = Date.now();
   configWithHeaders.headers[Defs.httpCustomHeader_XWebClient] = 1;
+
+  /*
   if (axios.defaults.headers.common[Defs.httpCustomHeader_XAuthToken])
     configWithHeaders.headers[Defs.httpCustomHeader_XAuthToken] =
       axios.defaults.headers.common[Defs.httpCustomHeader_XAuthToken];
@@ -149,6 +169,14 @@ function addHeaders(config) {
   if (axios.defaults.headers.common[Defs.httpCustomHeader_XConnToken])
     configWithHeaders.headers[Defs.httpCustomHeader_XConnToken] =
       axios.defaults.headers.common[Defs.httpCustomHeader_XConnToken];
+  */
+
+  let token = cookie.get(Defs.httpCustomHeader_XAuthToken);
+  if (token) configWithHeaders.headers[Defs.httpCustomHeader_XAuthToken] = token;
+  token = cookie.get(Defs.httpCustomHeader_XClientToken);
+  if (token) configWithHeaders.headers[Defs.httpCustomHeader_XClientToken] = token;
+  token = cookie.get(Defs.httpCustomHeader_XConnToken);
+  if (token) configWithHeaders.headers[Defs.httpCustomHeader_XConnToken] = token;
 
   return configWithHeaders;
 }
@@ -160,8 +188,9 @@ export default {
   post: _post,
   put: _put,
   logAuthToken,
+  getClientTokenHeader,
   setAuthTokenHeader,
   setBaseURL,
   setClientTokenHeader,
   setConnTokenHeader
-};
+}; 

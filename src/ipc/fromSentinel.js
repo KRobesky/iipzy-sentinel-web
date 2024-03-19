@@ -2,6 +2,7 @@ import Defs from "iipzy-shared/src/defs";
 import { sleep } from "iipzy-shared/src/utils/utils";
 
 import eventManager from "./eventManager";
+//import http from "./httpService_impl";
 import http from "./httpService";
 
 import sentinelInfo from "../utils/sentinelInfo";
@@ -77,6 +78,11 @@ class FromSentinel {
 
     while (this.running) {
       console.log("fromSentinel.run: calling eventWait");
+      let clientToken = http.getClientTokenHeader();
+      if (!clientToken) {
+        console.log("fromSentinel.run: other client token is null");
+      }
+
       const { data, status } = await http.get(
         this.sentinelProtocol + this.sentinelIPAddress + "/api/eventWait",
         {

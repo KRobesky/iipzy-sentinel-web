@@ -11,9 +11,14 @@ function get(key, defaultValue) {
   return val;
 }
 
+function remove(key) {
+  log("cookie.remove: key = " + key, "cook", "info");
+  Cookies.remove(key);
+}
+
 function set(key, val) {
   log("cookie.set: key = " + key + ", val = " + val, "cook", "info");
   return Cookies.set(key, val, { expires: 365 });
 }
 
-export default { get, set };
+export default { get, remove, set };

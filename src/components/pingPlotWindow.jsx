@@ -5,6 +5,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 
 import Defs from "iipzy-shared/src/defs";
 import { get_is_debugging } from "iipzy-shared/src/utils/globals";
+import { sleep } from "iipzy-shared/src/utils/utils";
 
 import eventManager from "../ipc/eventManager";
 import toSentinel from "../ipc/toSentinel";
@@ -76,6 +77,7 @@ class PingPlotWindow extends React.Component {
     this.zoomLevel = ZOOMLEVEL_DEFAULT;
     this.zoomLevelPrev = ZOOMLEVEL_DEFAULT;
 
+    this.updateTimestamp = Date.now();
     this.maxPoints = 720;
     this.minPoints = 90;
     this.numPoints = this.zoomArray[this.zoomLevel].numPoints;
@@ -351,7 +353,23 @@ class PingPlotWindow extends React.Component {
     return dsa[1] + " " + dsa[2];
   }
 
-  handlePingPlotData(jo) {
+  async handlePingPlotData(jo) {
+    const prevUpdateTimestamp = this.updateTimestamp;
+    const curTimestamp = Date.now();
+    if (curTimestamp > prevUpdateTimestamp + (10*1000)) {
+      // no update for at least ten seconds.
+      // be sure we are getting all data - because server may reject the request be the sentinel is logged out.
+      if (jo.entries.length <= 1) {
+        // force complete update.
+        console.log("handlePingPlotData: forcing complete update");
+        await sleep(1000);
+        this.componentDidMount();
+        return;
+      }   
+    }
+
+    this.updateTimestamp = curTimestamp;
+
     if (this.selectedRow >= 0) {
       this.selectedRow--;
     }
@@ -751,10 +769,12 @@ class PingPlotWindow extends React.Component {
     return moveOffset;
   }
 
+  // line #1085 <p style={{ fontSize: "80%", fontWeight: "bold" }}>{cpuUtlzHeader}</p>
+
   render() {
     console.log("pingPlotWindow.render called");
 
-    const tcMode = this.tcMode;
+    const tcMode = false; // this.tcMode;
     const showSpinner =
       this.allButtonsDisabled && this.zoomLevel >= ZOOMLEVEL_1DAY;
     const timeLineHeader = this.getTitle();
@@ -1017,13 +1037,13 @@ class PingPlotWindow extends React.Component {
             }}
           />
         </div>
-        {this.tcMode && (
+        {tcMode && (
           <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
         
             <p style={{ fontSize: "80%", fontWeight: "bold" }}>{throughputHeaderPri}</p>
           </div>
         )}
-        {this.tcMode && (
+        {tcMode && (
           <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
             <Chart
               width={850}
@@ -1042,7 +1062,7 @@ class PingPlotWindow extends React.Component {
             />
           </div>
         )}
-        {this.tcMode && (
+        {tcMode && (
           <div style={{ marginLeft: 0, marginTop: -16, marginBottom: 0 }}>
             <Chart
               width={850}
@@ -1062,7 +1082,14 @@ class PingPlotWindow extends React.Component {
           </div>
         )}
         <div style={{ marginLeft: 20, marginTop: 0, textAlign: "left" }}>
-          <p style={{ fontSize: "80%", fontWeight: "bold" }}>{cpuUtlzHeader}</p>
+          <p style={{ fontSize: "80%", fontWeight: "bold" }}>
+            <span style={{ color:"blue" }}>CPU</span>
+            <span style={{ color:"black" }}>/</span>
+            <span style={{ color:"red" }}>Memory</span>
+            <span style={{ color:"black" }}>/</span>
+            <span style={{ color:"orange" }}>Storage</span>
+            <span style={{ color:"black" }}> Utilization %</span>
+          </p>
         </div>
         <div style={{ marginLeft: 0, marginTop: -18, marginBottom: 0 }}>
           <Chart
